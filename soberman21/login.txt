@@ -1,0 +1,5 @@
+User: admin ; password: Ad009257
+
+
+User: solama@detracash.com
+pass: 123456

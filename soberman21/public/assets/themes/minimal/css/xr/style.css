@@ -1,0 +1,81 @@
+.custom-select-list {
+  max-height: 190px;
+  overflow-y: auto;
+}
+.custom-select-list .custom-option {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 8px 20px;
+  cursor: pointer;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.custom-select-list .custom-option:hover, .custom-select-list .custom-option.active {
+  background-color: #f5f6f9;
+}
+.custom-select-list .custom-option img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  margin-right: 20px;
+}
+.custom-select-list .custom-option .custom-country {
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+}
+
+.how-it-work {
+  overflow: hidden;
+}
+.how-it-work .text-content h3 {
+  text-align: start;
+  font-size: 35px;
+}
+@media only screen and (max-width: 568px) {
+  .how-it-work .text-content h3 {
+    font-size: 25px !important;
+  }
+}
+.how-it-work .text-content h4 {
+  text-align: start;
+  color: #51bfdb;
+}
+
+.bottom-card-img .bottom-img{
+  width: 40px;
+  height: 40px;
+  margin-bottom: 15px;
+}
+.bottom-card-img .bottom-img img{
+  width: 100%;
+  height: 100%;
+}
+
+.countries .card .thumb {
+  margin-right: 8px;
+}
+.countries .card .thumb img {
+  width: 2rem;
+  height: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin: auto;
+}
+.countries .card h3 {
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 700;
+}
+.countries .card p {
+  color: #000000;
+  font-size: 10px;
+  margin-top: 10px;
+  font-weight: 600;
+}

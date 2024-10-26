@@ -1,0 +1,23 @@
+65.20.74.190 
+)4kZrQ[dH-H}aH#j
+http://envato.appdevs.net/xremitpro/
+https://xremitpro.appdevs.net/
+https://test.rtfshopbd.com/
+https://remito.bugfinder.net
+
+13. Add Coupon function on calculator in Frontend.
+12. Multicurrency support is still pending->pending
+
+14 . Calculator in merchant account TBCS
+10 . Google Captcha key for server. Still pending->need to check
+8  . How can we ensure that the user admin is informed about the deletion and the user email is removed from the system automatically to meet GDPR standards?
+
+
+////future
+▪ ‘Transactions logs’ and ‘Transactions’ – we should consider merging them.
+▪ KYC search, Groupings and uploads in an external server
+▪ Add blog list to roles.
+▪ Check ticket responses in admin
+▪ ETC. Will get back to you with them.
+
+
