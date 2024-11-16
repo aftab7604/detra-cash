@@ -9,12 +9,16 @@ use App\Models\SendMoney;
 use App\Models\Withdrow;
 use App\Models\TopUpLog;
 use App\Models\User;
+use App\Models\Configure;
+use App\Models\ReferralReward;
+use App\Models\Country;
 use Carbon\Carbon;
 use Facades\App\Services\ReloadlyService;
 use Facades\App\Services\Flutterwave;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Stevebauman\Purify\Facades\Purify;
+use Facades\App\Services\BasicService;
 
 class TransferLogController extends Controller
 {
@@ -222,9 +226,76 @@ class TransferLogController extends Controller
             return back()->withInput();
         }
 
-
+        
         $user = $sendMoney->user;
         if($req->status == 1){
+            $txnExist = SendMoney::where(["user_id"=>$user->id,'status'=>1])->first();
+            if(!$txnExist){
+                $reward_redeemed = ReferralReward::where("user_id",$user->id)->first();
+                if(!$reward_redeemed){
+                    $send_amount = $sendMoney->send_amount;
+                    $send_currency = Country::find($sendMoney->send_currency_id);
+                    if($send_currency->code != 'EUR'){ // covert other currency into euro
+                     
+                    }
+    
+                    $reward = 0;
+                    $Rreward = 0;
+    
+                    $conf = Configure::find(1);
+                    if($send_amount >= $conf->reward_min_txn ){
+
+                        if($conf->referral_reward_status = 1){
+                            $usr = User::find($user->id);
+                            $reward = $conf->referral_reward;
+                            if($conf->referral_reward_type == 'percent'){
+                                $reward = (($send_amount / 100) * $reward);
+                            }
+        
+                            $trx_id = strRandom();
+                            $remarks = "You got commission from #".$sendMoney->invoice;
+                            BasicService::makeTransaction($user, getAmount($reward),  0, '+', $trx_id, $remarks );
+        
+                            $usr->balance +=  $reward;
+                            $usr->save();
+        
+                        }
+        
+                        if($conf->refree_reward_status = 1){
+                            $usr = User::where("id",$user->id)->with('referral')->first();
+                            if($user->referral){
+                                $Rreward = $conf->refree_reward;
+                                if($conf->refree_reward_type == 'percent'){
+                                    $Rreward = (($send_amount / 100) * $Rreward);
+                                }
+            
+                                $trx_id = strRandom();
+                                $remarks = "You got commission from #".$sendMoney->invoice;
+                                BasicService::makeTransaction($usr->referral, getAmount($Rreward),  0, '+', $trx_id, $remarks );
+            
+                                $bal = $usr->referral->balance + $Rreward;
+                                User::where("id",$usr->referral->id)->update([
+                                    'balance'=>$bal
+                                ]);
+                            }
+                            
+                        }
+        
+                        //creating record as redeemed referal
+                        ReferralReward::create([
+                            "user_id"=>$user->id,
+                            'referral_amount'=>$reward,
+                            'refree_amount'=>$Rreward
+                        ]);
+
+                    }
+                    
+
+                  
+                }
+            }
+            
+                
             //complete
             $sendMoney->admin_id = auth()->guard('admin')->id();
             $sendMoney->admin_reply = $req->admin_reply;

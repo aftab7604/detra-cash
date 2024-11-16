@@ -64,8 +64,9 @@
                                     <div class="choose-currency">
                                         <select id="s-currency" name="sendCountry" class="js-example-templating"
                                                 @change="onChangeSend($event)">
-                                            <option v-for="item in senderCurrencies" :value="item.id"
-                                                    :data-image="item.flag" :data-code="item.code">
+                                            <option v-for="item in senderCurrencies" :value="item.id" 
+                                                    :data-image="item.flag" :data-code="item.code" :selected="item.slug == sendFrom.slug">
+                                                    
                                                     @{{ item.name}}
                                             </option>
                                         </select>
@@ -139,7 +140,7 @@
                                         <select id="g-currency" class="js-example-templating"
                                                 @change="onChangeReceive($event)" name="getCountry">
                                             <option v-for="item in receiverCurrencies" :value="item.id"
-                                                    :data-image="item.flag" :data-code="item.code">@{{item.name}}
+                                                    :data-image="item.flag" :data-code="item.code" :selected="item.slug == receiveFrom.slug">@{{item.name}}
                                             </option>
                                         </select>
                                     </div>
@@ -287,12 +288,12 @@
             methods: {
                 applycupon(){
                     var self = this
-                    console.log(self.cupon)
+                    // console.log(self.cupon)
                     axios.post('{{ route('applycupon') }}',{
                         coupon: this.cupon
                     })
                     .then(res => {
-                        console.log(res)
+                        // console.log(res)
                         if(res.data=='Invalid Coupon'){
                             self.cupone=res.data
                             self.discount=0
@@ -396,13 +397,13 @@
                     }
                 },
                 getFacilities(id) {
-                    console.log(id)
+                    // console.log(id)
                     axios.get('{{ route('serviceList') }}',{
                     params: {
                         srceiveid: id,
                     }
                     }).then(res => {
-                        console.log(res)
+                        // console.log(res)
                         $('#select-service').html(``).selectmenu("refresh");
                         var options = `<option>@lang("Select Service")</option>`;
                         for (let i = 0; i < res.data.length; i++) {
@@ -423,27 +424,42 @@
                 currencyList() {
                     axios.get('{{ route('currencyList') }}')
                         .then(res => {
-                           
+                        //    console.log(res.data)
+                           // Reorder senderCurrencies to put EUR on top
+                            // this.senderCurrencies = res.data.senderCurrencies.sort((a, b) => {
+                            //     if (a.code === 'EUR') return -1;  // Move EUR to the start
+                            //     if (b.code === 'EUR') return 1;
+                            //     return 0;  // Keep other elements in their original order
+                            // });
+
+                            // // Reorder receiverCurrencies to put NGN on top
+                            // this.receiverCurrencies = res.data.receiverCurrencies.sort((a, b) => {
+                            //     if (a.code === 'NGN') return -1;  // Move NGN to the start
+                            //     if (b.code === 'NGN') return 1;
+                            //     return 0;  // Keep other elements in their original order
+                            // });
+                            
                             this.senderCurrencies = res.data.senderCurrencies
                             this.receiverCurrencies = res.data.receiverCurrencies
 
                             this.getFacilities(this.receiverCurrencies[0].id)
 
-                            var per_transfer = this.senderCurrencies[0].per_transfer + ' ' + this.senderCurrencies[0].code;
-                            var daily_limit = this.senderCurrencies[0].daily_limit + ' ' + this.senderCurrencies[0].code;
-                            var monthly_limit = this.senderCurrencies[0].monthly_limit + ' ' + this.senderCurrencies[0].code;
+                            var per_transfer = this.senderCurrencies[3].per_transfer + ' ' + this.senderCurrencies[3].code;
+                            var daily_limit = this.senderCurrencies[3].daily_limit + ' ' + this.senderCurrencies[3].code;
+                            var monthly_limit = this.senderCurrencies[3].monthly_limit + ' ' + this.senderCurrencies[3].code;
 
-                            var receive_per_transfer = this.receiverCurrencies[0].per_transfer + ' ' + this.receiverCurrencies[0].code;
-                            var receive_daily_limit = this.receiverCurrencies[0].daily_limit + ' ' + this.receiverCurrencies[0].code;
-                            var receive_monthly_limit = this.receiverCurrencies[0].monthly_limit + ' ' + this.receiverCurrencies[0].code;
+                            var receive_per_transfer = this.receiverCurrencies[8].per_transfer + ' ' + this.receiverCurrencies[8].code;
+                            var receive_daily_limit = this.receiverCurrencies[8].daily_limit + ' ' + this.receiverCurrencies[8].code;
+                            var receive_monthly_limit = this.receiverCurrencies[8].monthly_limit + ' ' + this.receiverCurrencies[8].code;
 
                             if (0 < this.senderCurrencies.length) {
-                                this.sendFrom = this.senderCurrencies[0];
-                                var minimum_amount = this.senderCurrencies[0].minimum_amount;
+                                this.sendFrom = this.senderCurrencies[3];
+                                var minimum_amount = this.senderCurrencies[3].minimum_amount;
                                 this.send_amount = parseInt(minimum_amount)
                             }
                             if (0 < this.receiverCurrencies.length) {
-                                this.receiveFrom = this.receiverCurrencies[0];
+                                this.receiveFrom = this.receiverCurrencies[8];
+                                // console.log(this.receiveFrom)
                             }
 
                             this.getRate()

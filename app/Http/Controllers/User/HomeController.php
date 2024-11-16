@@ -67,8 +67,6 @@ class HomeController extends Controller
 
     public function calculation(Request $request)
     {
-
-
         $this->validate($request, [
             'amount' => 'required|numeric',
             'sendCountry' => 'required|numeric',
@@ -83,8 +81,11 @@ class HomeController extends Controller
             'payout_network.required' => "Provider must be required",
             'amount.required' => "Enter Amount",
         ]);
-
-
+        
+        $user = $this->user;
+        if(empty($user->firstname) || empty($user->lastname)  || empty($user->email) || empty($user->phone) || empty($user->dob) || empty($user->address) || empty($user->country) || empty($user->image)){
+            return redirect()->back()->with("message",["alert"=>"alert-warning","msg"=>"Complete your profile before send moeny."]);
+        }
 
         $country = Country::select('id', 'name', 'slug', 'code', 'minimum_amount','maximum_amount', 'rate', 'facilities', 'limit', 'image')->whereIn('id', [$request->sendCountry, $request->getCountry])->where('status', 1)->get();
         if ($request->has('sendCountry')) {

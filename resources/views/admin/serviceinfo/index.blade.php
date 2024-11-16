@@ -10,7 +10,7 @@
 
         <div class="card card-primary m-0 m-md-4 my-4 m-md-0 shadow">
             <div class="card-body">
-                @if(!adminAccessRoute(config('role.service_info.access.add')))
+                @if(adminAccessRoute(config('role.service_info.access.add')))
                 <a href="{{ route('admin.serviceinfo.create') }}" 
                    class="btn btn-primary mb-3 float-right">
                     <i  class="fa fa-plus" ></i> {{trans('Add New')}}
@@ -25,7 +25,9 @@
                             <th scope="col">@lang('Name')</th>
                             <th scope="col">@lang('Service')</th>
                             <th scope="col">@lang('Status')</th>
+                            @if(adminAccessRoute(config('role.service_info.access.edit')) || adminAccessRoute(config('role.service_info.access.delete')))
                             <th scope="col">@lang('Action')</th>
+                            @endif
                         </tr>
                         </thead>
                         <tbody>
@@ -37,13 +39,14 @@
                         		<td data-label="@lang('Name')">{{ $serviceitem->service->name }}</td>
                         		<td data-label="@lang('Status')">
                                 @if($serviceitem->status == 1)<span v-if="item.status == 1" class="badge badge-success badge-pill">{{trans('Active')}}</span> @else <span v-else class="badge badge-danger badge-pill">{{trans('Deactive')}}</span> @endif</td>
-                        		<td data-label="@lang('Action')">
-                                    @if(!adminAccessRoute(config('role.service_info.access.edit')))
+                        		@if(adminAccessRoute(config('role.service_info.access.edit')) || adminAccessRoute(config('role.service_info.access.delete')))
+                                <td data-label="@lang('Action')">
+                                    @if(adminAccessRoute(config('role.service_info.access.edit')))
                         			<a class="btn btn-primary btn-circle editBtn" href="{{ route('admin.serviceinfo.edit',$serviceitem->id) }}">
                                         <i class="fa fa-edit"></i>
                                     </a>
                                     @endif
-                                    @if(!adminAccessRoute(config('role.service_info.access.delete')))
+                                    @if(adminAccessRoute(config('role.service_info.access.delete')))
                                     <a href="javascript:void(0)"
                                         class="btn btn-sm btn-outline-danger deleteBtn"
                                         data-toggle="modal"
@@ -53,6 +56,7 @@
                                     </a>
                                     @endif
                                 </td>
+                                @endif
                         	</tr>
                         @endforeach
                         </tbody>

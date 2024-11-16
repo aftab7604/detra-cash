@@ -34,20 +34,26 @@
                         	<tr >
                         		<td data-label="@lang('SL')">{{ $key+1 }}</td>
                         		<td data-label="@lang('Name')">{{ $purposeitem->title }}</td>
+                                @if(adminAccessRoute(array_merge(config('role.purpose_list.access.edit'), config('role.purpose_list.access.delete'))))
                         		<td data-label="@lang('Action')">
+                                    @if(adminAccessRoute(config('role.purpose_list.access.edit')))
                         			<a href="{{ route('admin.purpose.edit',$purposeitem) }}"
-                                               class="btn btn-primary btn-circle"
-                                               data-toggle="tooltip"
-                                               data-placement="top"
-                                               data-original-title="@lang('Edit')">
-                                                <i class="fa fa-edit"></i></a>
-
-                                                <button type="button"
-                                                        class="btn btn-sm btn-danger  btn-circle disableBtn"
-                                                        data-route="{{ route('admin.purpose.delete', $purposeitem) }}"
-                                                        data-toggle="modal" data-target="#disableModal" ><i class="fa fa-trash-alt"></i>
-                                                </button>
+                                        class="btn btn-primary btn-circle"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        data-original-title="@lang('Edit')">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    @endif
+                                    @if(adminAccessRoute(config('role.purpose_list.access.delete')))
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger  btn-circle disableBtn"
+                                            data-route="{{ route('admin.purpose.delete', $purposeitem) }}"
+                                            data-toggle="modal" data-target="#disableModal" ><i class="fa fa-trash-alt"></i>
+                                    </button>
+                                    @endif
                         		</td>
+                                @endif
                         	</tr>            
 
                         @endforeach

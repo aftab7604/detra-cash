@@ -18,7 +18,7 @@
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="{{route('admin.staff')}}" aria-expanded="false">
                             <i data-feather="users" class="feather-icon"></i>
-                            <span class="hide-menu">@lang('Manage Staff')</span>
+                            <span class="hide-menu">@lang('Role Permission')</span>
                         </a>
                     </li>
                 @endif
@@ -50,9 +50,8 @@
                     </li>
                 @endif
 
-                @if(adminAccessRoute(config('role.service_list.access.view')) || adminAccessRoute(config('role.service_info.access.view')) || adminAccessRoute(config('role.continent_list.access.view')) || adminAccessRoute(config('role.country_list.access.view')) || adminAccessRoute(config('role.purpose_list.access.view')) || adminAccessRoute(config('role.source_fund.access.view')) || adminAccessRoute(config('role.manage_coupon.access.view')) || adminAccessRoute(config('role.manage_coupon_used.access.view')))
+                @if(adminAccessRoute(config('role.service_list.access.view')))
                     <li class="nav-small-cap"><span class="hide-menu">@lang('Manage Remittance')</span></li>
-                    @if(adminAccessRoute(config('role.service_list.access.view')) || adminAccessRoute(config('role.service_info.access.view')) || adminAccessRoute(config('role.continent_list.access.view')) || adminAccessRoute(config('role.country_list.access.view')))
                     <li class="sidebar-item">
                         <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
                             <i class="fas fa-globe"></i>
@@ -66,8 +65,7 @@
                                 </a>
                             </li>
                             @endif
-                            {{-- ! in if --}}
-                            @if(adminAccessRoute(config('role.service_info.access.view')))
+                            @if(!adminAccessRoute(config('role.service_info.access.view')))
                             <li class="sidebar-item">
                                 <a href="{{route('admin.serviceinfo.index')}}" class="sidebar-link">
                                     <span class="hide-menu">@lang('Service Info')</span>
@@ -90,7 +88,6 @@
                             @endif
                         </ul>
                     </li>
-                    @endif
 
                     @if(adminAccessRoute(config('role.purpose_list.access.view')))
                     <li class="sidebar-item">
@@ -100,19 +97,16 @@
                         </a>
                     </li>
                     @endif
-                    
-                    @if(adminAccessRoute(config('role.source_fund.access.view')))
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="{{route('admin.sourceOfFund')}}" aria-expanded="false">
                             <i data-feather="help-circle" class="feather-icon"></i>
                             <span class="hide-menu">@lang('Source Of Fund')</span>
                         </a>
                     </li>
-                    @endif
                 @endif
 
 
-                @if(adminAccessRoute(array_merge(config('role.manage_coupon.access.view'), config('role.manage_coupon.access.view'))) || adminAccessRoute(config('role.manage_coupon_used.access.view'))) 
+                @if(adminAccessRoute(array_merge(config('role.manage_coupon.access.view'), config('role.manage_coupon.access.view'))))
                     <li class="sidebar-item">
                         <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
                             <i class="fas fa-percent"></i>
@@ -140,10 +134,9 @@
 
 
                
-                @if(adminAccessRoute(config('role.remittance_history_pending_recharge.access.view')) || adminAccessRoute(config('role.remittance_history_pending.access.view')) || adminAccessRoute(config('role.remittance_history_complete.access.view')) || adminAccessRoute(config('role.remittance_history_cancelled.access.view')) || adminAccessRoute(config('role.remittance_history.access.view')))
+                @if(adminAccessRoute(config('role.remittance_history.access.view')))
                     <li class="list-divider"></li>
                     <li class="nav-small-cap"><span class="hide-menu">@lang('REMITTANCE HISTORY')</span></li>
-                    @if(adminAccessRoute(config('role.remittance_history_pending_recharge.access.view')) || adminAccessRoute(config('role.remittance_history_pending.access.view')) || adminAccessRoute(config('role.remittance_history_complete.access.view')) || adminAccessRoute(config('role.remittance_history_cancelled.access.view')) || adminAccessRoute(config('role.remittance_history.access.view')))
                     <li class="sidebar-item">
                         <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
                             <i class="fas fa-exchange-alt"></i>
@@ -178,17 +171,13 @@
                                 </a>
                             </li>
                             @endif
-                            @if(adminAccessRoute(config('role.remittance_history.access.view')))
                             <li class="sidebar-item">
                                 <a href="{{route('admin.money-transfer')}}" class="sidebar-link">
                                     <span class="hide-menu">@lang('All History')</span>
                                 </a>
-                            </li>    
-                            @endif
-                            
+                            </li>
                         </ul>
                     </li>
-                    @endif
                 @endif
                     @php
                         $user          = App\Models\Admin::where('id',auth()->guard('admin')->user()->id)->with('role')->first();
@@ -271,15 +260,14 @@
                 @if(adminAccessRoute(array_merge(config('role.user_management.access.view'), config('role.add_merchant.access.add'), config('role.merchants.access.view'), config('role.kyc_pending.access.view'), config('role.kyc_log.access.view'), config('role.email_send.access.view'), config('role.loggedin_log.access.view'), config('role.activity_log.access.view'))))
                     {{--Manage User--}}
                     <li class="nav-small-cap"><span class="hide-menu">@lang('Manage User')</span></li>
-                    @if(adminAccessRoute(config('role.user_management.access.view')))
+
                     <li class="sidebar-item {{menuActive(['admin.users','admin.users.search','admin.user-edit*','admin.send-email*','admin.users'],3)}}">
                         <a class="sidebar-link" href="{{ route('admin.users') }}" aria-expanded="false">
                             <i class="fas fa-users"></i>
                             <span class="hide-menu">@lang('All User')</span>
                         </a>
                     </li>
-                    @endif
-                    
+
 
                     @if(adminAccessRoute(config('role.add_merchant.access.add')))
                     <li class="sidebar-item">
@@ -334,7 +322,7 @@
                         </a>
                     </li>
                     @endif
-                    @if(adminAccessRoute(config('role.activity_log.access.view')))
+                    @if(adminAccessRoute(config('role.loggedin_log.access.view')))
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="{{ route('admin.users.activityLog') }}"
                            aria-expanded="false">
@@ -577,24 +565,21 @@
                 </li>
                 @endif
 
-                @if(adminAccessRoute(config('role.blogcategory.access.view')) || adminAccessRoute(config('role.blog.access.view')))
-                    <li class="nav-small-cap"><span class="hide-menu">@lang('Blog Setting')</span></li>
-				    @if(adminAccessRoute(config('role.blogcategory.access.view')))
+				@if(adminAccessRoute(config('role.blogcategory.access.view')))
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="{{route('admin.blog.category')}}" aria-expanded="false">
                             <i class="fas fa-file-image"></i><span
                                 class="hide-menu">@lang('Blog Category')</span>
                         </a>
                     </li>
-                    @endif
-				    @if(adminAccessRoute(config('role.blog.access.view')))
+                @endif
+				@if(adminAccessRoute(config('role.blog.access.view')))
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="{{route('admin.blog.index')}}" aria-expanded="false">
                             <i class="fas fa-file-image"></i><span
                                 class="hide-menu">@lang('Blog List')</span>
                         </a>
                     </li>
-                    @endif
                 @endif
                 <li class="list-divider"></li>
 

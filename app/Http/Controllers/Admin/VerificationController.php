@@ -51,9 +51,7 @@ class VerificationController extends Controller
     {
         $user = Auth::guard('admin')->user();
         //app()->make(\Illuminate\Contracts\Config\Repository::class)->set('app.locale', $user->preferred_locale);
-
-
-        if (!$user->status) {
+        if (!isset($user->status) || !$user->status) {
             Auth::logout();
         }
         // elseif(!config('basic.twofaotp')) {
@@ -80,7 +78,7 @@ class VerificationController extends Controller
             return view('admin.auth.verification.2stepSecurity', compact('user', 'page_title'));
 
         }
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('admin.profile');
     }
 
 
@@ -227,7 +225,7 @@ class VerificationController extends Controller
             $user->two_fa_code = null;
             $user->sent_at = null;
             $user->save();
-            return redirect()->intended(route('admin.dashboard'));
+            return redirect()->intended(route('admin.profile'));
         }
         throw ValidationException::withMessages(['error' => "Verification code didn't match!"]);
     }

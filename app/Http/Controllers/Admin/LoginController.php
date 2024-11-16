@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 class LoginController extends Controller
 {
     use AuthenticatesUsers;
-    protected $redirectTo = '/admin/dashboard';
+    protected $redirectTo = '/admin/profile';
 
     public function __construct()
     {
@@ -215,10 +215,12 @@ class LoginController extends Controller
 
 		AdminLoginLog::create($ul);
 
-		$list = collect(config('role'))->pluck(['access', 'view'])->collapse()->intersect($user->admin_access);
-		if (count($list) == 0) {
-			$list = collect(['admin.profile']);
-		}
+		$list = collect(['admin.profile']);
+        // $list = collect(config('role'))->pluck(['access', 'view'])->collapse()->intersect($user->admin_access);
+		// if (count($list) == 0) {
+		// 	$list = collect(['admin.profile']);
+		// }
+
 		return redirect()->intended(route($list->first()));
 	}
 

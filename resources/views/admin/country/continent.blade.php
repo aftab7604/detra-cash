@@ -21,7 +21,7 @@
                             <th scope="col">@lang('SL')</th>
                             <th scope="col">@lang('Name')</th>
                             <th scope="col">@lang('Status')</th>
-                            @if(adminAccessRoute(config('role.continent_list.access.edit')))
+                            @if(adminAccessRoute(config('role.continent_list.access.edit')) || adminAccessRoute(config('role.continent_list.access.delete')))
                             <th scope="col">@lang('Action')</th>
                             @endif
                         </tr>
@@ -37,23 +37,28 @@
                             </td>
 
 
-                            @if(adminAccessRoute(config('role.continent_list.access.edit')))
+                            @if(adminAccessRoute(config('role.continent_list.access.edit')) || adminAccessRoute(config('role.continent_list.access.delete')))
                             <td data-label="@lang('Action')">
+                                @if(adminAccessRoute(config('role.continent_list.access.edit')))
                                 <a href="javascript:void(0)"
                                    data-toggle="modal" data-target="#editModal" @click="setVal(item)"
                                    class="btn btn-primary btn-sm"
                                    data-original-title="@lang('Edit')">
                                     <i class="fa fa-edit"></i>
                                 </a>
+                                @endif
+                                @if(adminAccessRoute(config('role.continent_list.access.delete')))
                                 <a href="javascript:void(0)"
                                    data-toggle="modal" data-target="#DelModal" @click="setVal(item)"
-                                   class="btn btn-danger btn-sm d-none"
+                                   class="btn btn-danger btn-sm"
                                    data-original-title="@lang('Remove')">
                                     <i class="fa fa-trash-alt"></i>
                                 </a>
+                                @endif
                             </td>
-
                             @endif
+
+                            
                         </tr>
                         </tbody>
                     </table>

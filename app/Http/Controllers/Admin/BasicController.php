@@ -50,6 +50,9 @@ class BasicController extends Controller
             'session_expire' => 'required|min:5|integer',
             'client_id' => 'required',
             'client_secret' => 'required',
+            'reward_min_txn'=>'required|numeric',
+            'referral_reward'=>'required|numeric',
+            'refree_reward'=>'required|numeric',
         ]);
 
         config(['basic.site_title' => $reqData['site_title']]);
