@@ -35,20 +35,26 @@
                         	<tr >
                         		<td data-label="@lang('SL')">{{ $key+1 }}</td>
                         		<td data-label="@lang('Name')">{{ $sourceOfFunditem->title }}</td>
+                                @if(adminAccessRoute(array_merge(config('role.source_fund.access.edit'), config('role.source_fund.access.delete'))))
                         		<td data-label="@lang('Action')">
-                        			<a href="{{ route('admin.sourceOfFund.edit',$sourceOfFunditem) }}"
-                                               class="btn btn-primary btn-circle"
-                                               data-toggle="tooltip"
-                                               data-placement="top"
-                                               data-original-title="@lang('Edit')">
-                                                <i class="fa fa-edit"></i></a>
-
-                                                <button type="button"
-                                                        class="btn btn-sm btn-danger  btn-circle disableBtn"
-                                                        data-route="{{ route('admin.sourceOfFund.delete', $sourceOfFunditem) }}"
-                                                        data-toggle="modal" data-target="#disableModal" ><i class="fa fa-trash-alt"></i>
-                                                </button>
+                                    @if(adminAccessRoute(config('role.source_fund.access.edit')))
+                                    <a href="{{ route('admin.sourceOfFund.edit',$sourceOfFunditem) }}"
+                                        class="btn btn-primary btn-circle"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        data-original-title="@lang('Edit')">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    @endif
+                                    @if(adminAccessRoute(config('role.source_fund.access.delete')))
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger  btn-circle disableBtn"
+                                            data-route="{{ route('admin.sourceOfFund.delete', $sourceOfFunditem) }}"
+                                            data-toggle="modal" data-target="#disableModal" ><i class="fa fa-trash-alt"></i>
+                                    </button>
+                                    @endif
                         		</td>
+                                @endif
                         	</tr>            
 
                         @endforeach

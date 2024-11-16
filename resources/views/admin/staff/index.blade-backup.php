@@ -50,7 +50,7 @@
                                     <td data-label="Username"><strong>{{$data->username}}</strong></td>
                                     <td data-label="Email">{{$data->email}}</td>
                                     <td data-label="Phone">{{$data->phone}}</td>
-                                    <td data-label="Role">{{@$data->role->role}}</td>
+                                    <td data-label="Role">{{$data->role->role}}</td>
 
                                     <td>
                                         <span  class="badge  badge-pill  badge-{{ $data->status ==0 ? 'danger' : 'success' }}">{{ $data->status == 0 ? 'Deactive' : 'Active' }}</span>
@@ -99,11 +99,11 @@
                                                                 </div>
                                                                 <div class="form-group col-md-4">
                                                                     <label class="text-dark"> {{trans('Select Country')}} :</label>
-                                                                    <select name="country_id" id="event-country-edit-{{$data->id}}" data-id="{{$data->id}}"
-                                                                            class="form-control event-country-edit" required>
+                                                                    <select name="country_id" id="event-country"
+                                                                            class="form-control " required>
                                                                         <option value="" @if(old('country_id') == '') selected @endif></option>
                                                                         @foreach($countries as $k => $country)
-                                                                            <option value="{{$country->id}}" data-code="{{$country->code}}" data-iso_code="{{$country->iso_code}}" @if($data->country_id == $country->id) selected @endif>
+                                                                            <option value="{{$country->id}}" @if($data->country_id == $country->id) selected @endif>
                                                                                 {{$country->name}}
                                                                             </option>
                                                                         @endforeach
@@ -111,9 +111,8 @@
                                                                 </div>
                                                                 <div class="form-group col-md-4">
                                                                     <label class="text-dark"> {{trans('Phone')}} :</label>
-                                                                    <input type="hidden" class="country_code" id="country_code-{{$data->id}}" data-id={{$data->id}}  name="country_code" value="{{$data->country_code}}">
-                                                                    <input type="hidden" class="phone_code" id="phone_code-{{$data->id}}" data-id={{$data->id}}  name="phone_code" value="{{$data->dial_code}}">
-                                                                    <input class="form-control dialcode-set phone phone-edit" data-dial_code="{{$data->dial_code}}"  data-id="{{$data->id}}" data-iso_code="{{@$data->country->iso_code}}" id="phone-edit-{{$data->id}}" aria-describedby="inputGroup-sizing-lg" name="phone"
+                                                                    <input type="hidden" class="phone_code" name="phone_code" value="+49">
+                                                                    <input class="form-control dialcode-set phone" aria-describedby="inputGroup-sizing-lg" name="phone"
                                                                         placeholder="{{trans('Mobile Number')}}" value="{{$data->phone}}"
                                                                         required>
                                                                 </div>
@@ -277,11 +276,7 @@
                                                                                 </tr>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                @foreach(config('rolegroup') as $k => $v)
-                                                                                <tr>
-                                                                                    <td colspan="5">{{$v['label']}}</td>
-                                                                                </tr>
-                                                                                @foreach ($v['items'] as $key=>$value)
+                                                                                @foreach(config('role') as $key => $value)
                                                                                 <tr>
                                                                                     <td data-label="Permissions" class="text-left">{{$value['label']}}</td>
                                                                                     <td data-label="View">
@@ -321,9 +316,7 @@
                                                                                         />
                                                                                         @endif
                                                                                     </td>
-                                                                                </tr>    
-                                                                                @endforeach
-                                                                                
+                                                                                </tr>
                                                                                 @endforeach
                                                                                 </tbody>
                                                                             </table>
@@ -398,10 +391,10 @@
                             <div class="form-group col-md-4">
                                 <label class="text-dark"> {{trans('Select Country')}} :</label>
                                 <select name="country_id" id="event-country"
-                                        class="form-control event-country" required>
+                                        class="form-control " required>
                                     <option value="" @if(old('country_id') == '') selected @endif></option>
                                     @foreach($countries as $k => $country)
-                                        <option value="{{$country->id}}" data-code="{{$country->code}}" data-iso_code="{{$country->iso_code}}">
+                                        <option value="{{$country->id}}">
                                             {{$country->name}}
                                         </option>
                                     @endforeach
@@ -529,12 +522,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach(config('rolegroup') as $k => $v)
-                                                <tr>
-                                                    <td colspan="5">{{$v['label']}}</td>
-                                                </tr>
-                                                @foreach ($v['items'] as $key=>$value)
-                                                
+                                            @foreach(config('role') as $key => $value)
                                                 <tr>
                                                     <td data-label="Permissions" class="text-left">{{$value['label']}}</td>
                                                     <td data-label="View">
@@ -558,7 +546,6 @@
                                                         @endif
                                                     </td>
                                                 </tr>
-                                                @endforeach
                                             @endforeach
                                             </tbody>
                                         </table>
@@ -612,38 +599,20 @@
 <script>
 $(document).ready(function () {
     var phoneInputs = document.querySelectorAll(".phone");
-    // var inputCountries = document.querySelector(".event-country-edit");
+    var inputCountry = document.querySelector("#country");
     var phoneCode = "+49";
     var itiInstances = [];
-    $(document).on("change",".event-country-edit",function(){
-        var uId = $(this).data("id");
-        var selectedCountryISO = $(this).find("option:selected").data("iso_code");
-        itiInstances[uId].setCountry(selectedCountryISO);
-        var selectedCountryData = itiInstances[uId].getSelectedCountryData();
-        $('#phone-'+uId).val(selectedCountryData.dialCode);
-        console.log('Country dropdown changed:', selectedCountryData.name, selectedCountryData.dialCode);
-        
-    })
 
-   
     // Initialize intlTelInput for each phone input
     phoneInputs.forEach(function(input) {
-        var uId = input.getAttribute('data-id')
-
-        var iso_code = document.getElementById("country_code-"+uId).value ? document.getElementById("country_code-"+uId).value : 'de';
-   
         var iti = window.intlTelInput(input, {
             separateDialCode: true,
-            initialCountry: iso_code,  // Set the default country to "de"
-            preferredCountries: [iso_code],
+            initialCountry: "de",  // Set the default country to "de"
+            preferredCountries: ["de"],
             utilsScript: "{{asset($themeTrue.'js/utils.js')}}",
         });
 
-        // itiInstances.push(iti);
-        itiInstances[uId] = iti;
-
-        console.log(itiInstances);
-        
+        itiInstances.push(iti);
 
         // Attach country change event to each input
         input.addEventListener('countrychange', function(e) {
@@ -655,19 +624,15 @@ $(document).ready(function () {
         });
     });
 
-    
     // Custom function to handle country change
     function handleCountryChange(countryData, inputElement) {
-        var InputUId = inputElement.getAttribute('data-id')
         phoneCode = countryData.iso2;
         console.log('New country selected:', countryData.name, countryData.dialCode);
         // Perform additional actions based on the countryData
-        $('#phone_code-'+InputUId).val(countryData.dialCode);
-        $('#country_code-'+InputUId).val(countryData.iso2);
+        $('.phone_code').val(countryData.dialCode);
     }
 
-    
-    
+
 });
 
 

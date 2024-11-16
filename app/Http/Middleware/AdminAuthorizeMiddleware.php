@@ -24,19 +24,20 @@ class AdminAuthorizeMiddleware
     
         // Two-factor authentication check
         if ($user->two_fa_verify) {
-            return $next($request);
+            // Check for role permissions and access control
+            $filtered = $list->intersect($roles->permissions);
+            // !in_array($request->route()->getName(), $list->toArray()) || 
+            if (in_array($request->route()->getName(), $filtered->toArray())) {
+                return $next($request);
+            }
+        
+            return redirect()->route('admin.403');
+            // return $next($request);
         } else {
             return redirect(route('admin.admincheck'));
         }  
         
-        // Check for role permissions and access control
-        $filtered = $list->intersect($roles->permissions);
         
-        if (!in_array($request->route()->getName(), $list->toArray()) || in_array($request->route()->getName(), $filtered->toArray())) {
-            return $next($request);
-        }
-    
-        return redirect()->route('admin.403');
     }
     
 }

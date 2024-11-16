@@ -10,10 +10,13 @@
 
         <div class="card card-primary m-0 m-md-4 my-4 m-md-0 shadow">
             <div class="card-body">
+                @if (adminAccessRoute(config('role.service_list.access.add')))
                 <a href="{{ route('admin.service.add') }}" 
                    class="btn btn-primary mb-3 float-right">
                     <i  class="fa fa-plus" ></i> {{trans('Add New')}}
-                </a>
+                </a>    
+                @endif
+                
 
                 
                 <div class="table-responsive">
@@ -23,7 +26,9 @@
                             <th scope="col">@lang('SL')</th>
                             <th scope="col">@lang('Name')</th>
                             <th scope="col">@lang('Status')</th>
+                            @if (adminAccessRoute(config('role.service_list.access.edit')))
                             <th scope="col">@lang('Action')</th>
+                            @endif
                         </tr>
                         </thead>
                         <tbody>
@@ -34,11 +39,13 @@
                         		<td data-label="@lang('Name')">{{ $serviceitem->name }}</td>
                         		<td data-label="@lang('Status')">
                                 @if($serviceitem->status == 1)<span v-if="item.status == 1" class="badge badge-success badge-pill">{{trans('Active')}}</span> @else <span v-else class="badge badge-danger badge-pill">{{trans('Deactive')}}</span> @endif</td>
-                        		<td data-label="@lang('Action')">
+                        		@if (adminAccessRoute(config('role.service_list.access.edit')))
+                                <td data-label="@lang('Action')">
                         			<a href="{{ route('admin.service.edit',$serviceitem->id) }}" class="btn btn-primary btn-circle editBtn" >
                                         <i class="fa fa-edit"></i>
                                     </a>
                                 </td>
+                                @endif
                         	</tr>
                         @endforeach
                         </tbody>

@@ -38,10 +38,20 @@
                             <div class="col-md-6 col-lg-6 col-xl-8">
 
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label>@lang('Name') <span class="text-danger">*</span></label>
-                                            <input type="text" name="name" class="form-control form-control-lg" value="{{$admin->name}}" placeholder="@lang('Enter Name')">
+                                            <label>@lang('First Name') <span class="text-danger">*</span></label>
+                                            <input type="text" name="first_name" class="form-control form-control-lg" value="{{$admin->first_name}}" placeholder="@lang('Enter First Name')">
+
+                                            @error('name')
+                                            <span class="text-danger">{{ trans($message) }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label>@lang('Last Name') <span class="text-danger">*</span></label>
+                                            <input type="text" name="last_name" class="form-control form-control-lg" value="{{$admin->last_name}}" placeholder="@lang('Enter Last Name')">
 
                                             @error('name')
                                             <span class="text-danger">{{ trans($message) }}</span>
@@ -49,7 +59,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label>@lang('Username') <span class="text-danger">*</span></label>
                                             <input type="text" name="username" class="form-control" value="{{$admin->username}}" placeholder="@lang('Enter Username')">
@@ -62,7 +72,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label>@lang('Email Address') <span class="text-danger">*</span></label>
                                             <input type="text" name="email" class="form-control" value="{{$admin->email}}" placeholder="@lang('Enter Email Address')">
@@ -73,14 +83,37 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label>@lang('Country') <span class="text-danger">*</span></label>
+                                            
+                                            <select name="country_id" id="event-country-edit-{{$admin->id}}" data-id="{{$admin->id}}"
+                                                    class="form-control event-country-edit" required>
+                                                <option value="" @if(old('country_id') == '') selected @endif></option>
+                                                @foreach($countries as $k => $country)
+                                                    <option value="{{$country->id}}" data-code="{{$country->code}}" data-iso_code="{{$country->iso_code}}" @if($admin->country_id == $country->id) selected @endif>
+                                                        {{$country->name}}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+
+                                            @error('country')
+                                            <span class="text-danger">{{ trans($message) }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label>@lang('Phone Number') <span class="text-danger">*</span></label>
-                                            <input type="hidden" class="phone_code" name="phone_code" value="+49">
+                                            <input type="hidden" class="phone_code" id="phone_code-{{$admin->id}}" data-id={{$admin->id}}  name="phone_code" value="{{$admin->dial_code}}">
+                                            <input type="hidden" class="country_code" id="country_code-{{$admin->id}}" data-id={{$admin->id}}  name="country_code" value="{{$admin->country_code}}">
+                                            {{-- <input type="hidden" class="phone_code" name="phone_code" value="+49"> --}}
                                             {{-- <input type="text" name="phone" class="form-control phone" value="{{$admin->phone}}" placeholder="@lang('Enter Phone Number')"> --}}
                                             <input class="form-control dialcode-set phone" aria-describedby="inputGroup-sizing-lg" name="phone"  
                                             placeholder="@lang('Enter Phone Number')" value="{{$admin->phone}}"
+                                            data-dial_code="{{$admin->dial_code}}"  data-id="{{$admin->id}}" data-iso_code="{{@$admin->country->iso_code}}"
                                             required>
+
                                             @error('phone')
                                             <span class="text-danger">{{ trans($message) }}</span>
                                             @enderror
@@ -96,6 +129,34 @@
                                             <span class="text-danger">{{ trans($message) }}</span>
                                             @enderror
                                         </div>
+                                    </div>
+
+                                    <div class="form-group col-md-3">
+                                        <label class="text-dark"> {{trans('City')}} :</label>
+                                        <input type="text" name="city" placeholder="City"
+                                               class="form-control " value="{{$admin->city}}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label class="text-dark"> {{trans('State')}} :</label>
+                                        <input type="text" name="state" placeholder="State"
+                                               class="form-control " value="{{$admin->state}}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label class="text-dark"> {{trans('Post Code')}} :</label>
+                                        <input type="text" name="post_code" placeholder="Post Code"
+                                               class="form-control " value="{{$admin->post_code}}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label class="text-dark"> {{trans('Preferred Language')}} :</label>
+                                        <select name="language_id" id="event-language"
+                                                class="form-control " required>
+                                            <option value="" @if(old('language') == '') selected @endif></option>
+                                            @foreach($languages as $k => $language)
+                                                <option value="{{$language->id}}" @if($admin->language_id == $language->id) selected @endif>
+                                                    {{$language->name}}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
 
                                     <div class="col-lg-12">
@@ -162,14 +223,18 @@ $(document).ready(function () {
 
     // Initialize intlTelInput for each phone input
     phoneInputs.forEach(function(input) {
+        var uId = input.getAttribute('data-id')
+        var iso_code = document.getElementById("country_code-"+uId).value ? document.getElementById("country_code-"+uId).value : 'de';
+
         var iti = window.intlTelInput(input, {
             separateDialCode: true,
-            initialCountry: "de",  // Set the default country to "de"
-            preferredCountries: ["de"],
+            initialCountry: iso_code,  // Set the default country to "de"
+            preferredCountries: [iso_code],
             utilsScript: "{{asset($themeTrue.'js/utils.js')}}",
         });
 
-        itiInstances.push(iti);
+        // itiInstances.push(iti);
+        itiInstances[uId] = iti;
 
         // Attach country change event to each input
         input.addEventListener('countrychange', function(e) {
@@ -183,11 +248,24 @@ $(document).ready(function () {
 
     // Custom function to handle country change
     function handleCountryChange(countryData, inputElement) {
+        var InputUId = inputElement.getAttribute('data-id')
         phoneCode = countryData.iso2; 
         console.log('New country selected:', countryData.name, countryData.dialCode);
         // Perform additional actions based on the countryData
-        $('.phone_code').val(countryData.dialCode);
+        $('#phone_code-'+InputUId).val(countryData.dialCode);
+        $('#country_code-'+InputUId).val(countryData.iso2);
     }
+
+    $(document).on("change",".event-country-edit",function(){
+        
+        var uId = $(this).data("id");
+        var selectedCountryISO = $(this).find("option:selected").data("iso_code");
+        itiInstances[uId].setCountry(selectedCountryISO);
+        var selectedCountryData = itiInstances[uId].getSelectedCountryData();
+        $('#phone-'+uId).val(selectedCountryData.dialCode);
+        console.log('Country dropdown changed:', selectedCountryData.name, selectedCountryData.dialCode);
+        
+    })
   
  
 });

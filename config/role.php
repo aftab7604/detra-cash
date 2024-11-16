@@ -62,10 +62,12 @@ $arr = [
                 'admin.service'
             ],
             'add' => [
-                'admin.store.service'
+                'admin.service.add',
+                'admin.service.store'
             ],
             'edit' => [
-                'admin.update.service'
+                'admin.service.edit',
+                'admin.service.update'
             ],
             'delete' => []
         ],
@@ -77,10 +79,12 @@ $arr = [
                 'admin.serviceinfo.index'
             ],
             'add' => [
-                 'admin.serviceinfo.create'
+                'admin.serviceinfo.create',
+                'admin.serviceinfo.store'
             ],
             'edit' => [
-                'admin.serviceinfo.edit'
+                'admin.serviceinfo.edit',
+                'admin.serviceinfo.update'
             ],
             'delete' => [
                 'admin.serviceinfo.destroy'
@@ -111,11 +115,14 @@ $arr = [
                 'admin.country'
             ],
             'add' => [
-                'admin.country.create'
+                'admin.country.create',
+                'admin.country.store'
             ],
             'edit' => [
                 'admin.country.edit',
-                'admin.country.multiple-active'
+                'admin.country.update',
+                'admin.country.multiple-active',
+                'admin.country.multiple-inactive',
             ],
             'delete' => []
         ]
@@ -137,7 +144,7 @@ $arr = [
         'label' => "Country Service",
         'access' => [
             'view' => [
-                'admin.country.service'
+                'admin.country.service',
             ],
             'add' => [
                 'admin.country.service.store'
@@ -154,7 +161,9 @@ $arr = [
             'view' => [
                 'admin.country.service.charge'
             ],
-            'add' => [],
+            'add' => [
+                'admin.country.service.charge.store'
+            ],
             'edit' => [],
             'delete' => []
         ]
@@ -166,13 +175,14 @@ $arr = [
                 'admin.purpose'
             ],
             'add' => [
-                'admin.store.purpose'
+                'admin.purpose.add',
             ],
             'edit' => [
-                'admin.update.purpose'
+                'admin.purpose.edit',
+                'admin.purpose.update'
             ],
             'delete' => [
-                'admin.delete.purpose'
+                'admin.purpose.delete'
             ]
         ]
     ],
@@ -183,13 +193,15 @@ $arr = [
                 'admin.sourceOfFund'
             ],
             'add' => [
-                'admin.store.sourceOfFund'
+                'admin.sourceOfFund.add',
+                'admin.sourceOfFund.store'
             ],
             'edit' => [
-                'admin.update.sourceOfFund'
+                'admin.sourceOfFund.edit',
+                'admin.sourceOfFund.update'
             ],
             'delete' => [
-                'admin.delete.sourceOfFund'
+                'admin.sourceOfFund.delete'
             ]
         ]
     ],
@@ -307,6 +319,7 @@ $arr = [
             'add' => [],
             'edit' => [
                 'admin.edit.payment.methods',
+                'admin.update.payment.methods'
             ],
             'delete' => [],
         ],
@@ -330,7 +343,6 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.payment.log',
-                'admin.payment.search',
             ],
             'add' => [],
             'edit' => [
@@ -344,7 +356,6 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.payment.pending',
-                'admin.payment.search',
             ],
             'add' => [],
             'edit' => [
@@ -358,12 +369,22 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.payment.reportlog',
-                'admin.payment.search',
             ],
             'add' => [],
             'edit' => [
                 'admin.payment.action'
             ],
+            'delete' => [],
+        ],
+    ],
+    'payment_search' => [
+        'label' => "Payment Search",
+        'access' => [
+            'view' => [
+                'admin.payment.search',
+            ],
+            'add' => [],
+            'edit' => [],
             'delete' => [],
         ],
     ],
@@ -485,7 +506,6 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.ticket',
-                'admin.ticket.view',
             ],
             'add' => [
                 'admin.ticket.reply'
@@ -500,8 +520,7 @@ $arr = [
         'label' => "Support Open Ticket",
         'access' => [
             'view' => [
-                'admin.ticket',
-                'admin.ticket.view',
+                'admin.ticket.open',
             ],
             'add' => [],
             'edit' => [],
@@ -512,8 +531,7 @@ $arr = [
         'label' => "Support Closed Ticket",
         'access' => [
             'view' => [
-                'admin.ticket',
-                'admin.ticket.view',
+                'admin.ticket.closed',
             ],
             'add' => [],
             'edit' => [],
@@ -524,14 +542,24 @@ $arr = [
         'label' => "Support Answered Ticket",
         'access' => [
             'view' => [
-                'admin.ticket',
-                'admin.ticket.view',
+                'admin.ticket.answered',
             ],
             'add' => [],
             'edit' => [],
             'delete' => [],
         ],
     ],
+    'support_ticket_detail' => [
+            'label' => "Support Ticket Detail",
+            'access' => [
+                'view' => [
+                    'admin.ticket.view',
+                ],
+                'add' => [],
+                'edit' => [],
+                'delete' => [],
+            ],
+        ],
     'subscriber' => [
         'label' => "Subscriber",
         'access' => [

@@ -5,6 +5,16 @@
 @if(isset($templates['calculation'][0]) && $calculation = $templates['calculation'][0])
     <section id="home-banner">
         <div class="overview mx-lg-5">
+             
+            @if (Session::has("message"))
+            <div class="alert {{Session::get('message')['alert']}} alert-dismissible fade show" role="alert">
+                <strong>{{Session::get("message")['msg']}}</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>    
+            @endif
+            
             <div class="row align-items-center" id="basicCalcInfo">
             <div class="col-xl-4 col-lg-4">
                     <br>
@@ -377,21 +387,21 @@
 
                             this.getFacilities(this.receiverCurrencies[0].facilities)
 
-                            var per_transfer = this.senderCurrencies[0].per_transfer + ' ' + this.senderCurrencies[0].code;
-                            var daily_limit = this.senderCurrencies[0].daily_limit + ' ' + this.senderCurrencies[0].code;
-                            var monthly_limit = this.senderCurrencies[0].monthly_limit + ' ' + this.senderCurrencies[0].code;
+                            var per_transfer = this.senderCurrencies[3].per_transfer + ' ' + this.senderCurrencies[3].code;
+                            var daily_limit = this.senderCurrencies[3].daily_limit + ' ' + this.senderCurrencies[3].code;
+                            var monthly_limit = this.senderCurrencies[3].monthly_limit + ' ' + this.senderCurrencies[3].code;
 
-                            var receive_per_transfer = this.receiverCurrencies[0].per_transfer + ' ' + this.receiverCurrencies[0].code;
-                            var receive_daily_limit = this.receiverCurrencies[0].daily_limit + ' ' + this.receiverCurrencies[0].code;
-                            var receive_monthly_limit = this.receiverCurrencies[0].monthly_limit + ' ' + this.receiverCurrencies[0].code;
+                            var receive_per_transfer = this.receiverCurrencies[8].per_transfer + ' ' + this.receiverCurrencies[8].code;
+                            var receive_daily_limit = this.receiverCurrencies[8].daily_limit + ' ' + this.receiverCurrencies[8].code;
+                            var receive_monthly_limit = this.receiverCurrencies[8].monthly_limit + ' ' + this.receiverCurrencies[8].code;
 
                             if (0 < this.senderCurrencies.length) {
-                                this.sendFrom = this.senderCurrencies[0];
-                                var minimum_amount = this.senderCurrencies[0].minimum_amount;
+                                this.sendFrom = this.senderCurrencies[3];
+                                var minimum_amount = this.senderCurrencies[3].minimum_amount;
                                 this.send_amount = parseInt(minimum_amount)
                             }
                             if (0 < this.receiverCurrencies.length) {
-                                this.receiveFrom = this.receiverCurrencies[0];
+                                this.receiveFrom = this.receiverCurrencies[8];
                             }
 
                             this.getRate()

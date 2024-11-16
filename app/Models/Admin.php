@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 class Admin extends Authenticatable
 {
     use Notifiable, Notify;
+    protected $fillable = ['language_id','state','city','country_code'];
     protected $guarded = ['id'];
     protected $hidden = [
         'password', 'remember_token',
@@ -49,6 +50,10 @@ class Admin extends Authenticatable
         $this->mail($this, 'PASSWORD_RESET', $params = [
             'message' => '<a href="'.url('admin/password/reset',$token).'?email='.$this->email.'" target="_blank">Click To Reset Password</a>'
         ]);
+    }
+
+    public function country(){
+        return $this->belongsTo(Country::class);
     }
 
 }

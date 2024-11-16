@@ -11,6 +11,9 @@ use App\Models\Subscriber;
 use App\Models\Ticket;
 use App\Models\TopUpLog;
 use App\Models\User;
+use App\Models\Admin;
+use App\Models\Country;
+use App\Models\Language;
 use App\Rules\FileTypeValidate;
 use Carbon\Carbon;
 use Facades\App\Services\ReloadlyService;
@@ -143,21 +146,35 @@ class DashboardController extends Controller
 
     public function profile()
     {
-        $admin = $this->user;
-        return view('admin.profile', compact('admin'));
+        $admin = Admin::where("id",$this->user->id)->with(['country'])->first();
+        $countries = Country::where('status', 1)->get();
+        $languages = Language::all();
+        if($admin->two_fa_verify){
+            return view('admin.profile', compact('admin','countries','languages'));
+        }else{
+            return redirect(route('admin.admincheck'));
+        }
+        
     }
 
 
     public function profileUpdate(Request $request)
     {
-
         $req = Purify::clean($request->except('_token', '_method'));
         $rules = [
-            'name' => 'sometimes|required',
+            'first_name' => 'required|max:191',
+            'last_name' => 'required|max:191',
             'username' => 'sometimes|required|unique:admins,username,' . $this->user->id,
             'email' => 'sometimes|required|email|unique:admins,email,' . $this->user->id,
-            'phone' => 'sometimes|required',
-            'address' => 'sometimes|required',
+            'country_id' => 'required',
+            'country_code'=>'required',
+            'phone_code' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'post_code' => 'required',
+            'language_id' => 'required',
             'image' => ['nullable', 'image', new FileTypeValidate(['jpeg', 'jpg', 'png'])]
         ];
         $validator = Validator::make($request->all(), $rules);
@@ -173,11 +190,19 @@ class DashboardController extends Controller
                 return back()->with('error', 'Image could not be uploaded.');
             }
         }
-        $user->name = $req['name'];
+        $user->first_name = $req['first_name'];
+        $user->last_name = $req['last_name'];
         $user->username = $req['username'];
         $user->email = $req['email'];
-        $user->phone = "+".$req['phone_code'].$req['phone'];
+        $user->country_id = $req['country_id'];
+        $user->country_code = $req['country_code'];
+        $user->dial_code = $req['phone_code'];
+        $user->phone = $req['phone'];
         $user->address = $req['address'];
+        $user->city = $req['city'];
+        $user->state = $req['state'];
+        $user->post_code = $req['post_code'];
+        $user->language_id = $req['language_id'];
         $user->save();
         log_admin_activity('Update profile', 'Updated thire profile information');
 

@@ -23,7 +23,7 @@ class ManageRolePermissionController extends Controller
 
         $data['title'] = 'Manage Admin & Permission';
         $data['admins'] = Admin::where('id','!=',auth()->guard('admin')->id())->get();
-        $data['admins'] = Admin::with('role')->get();
+        $data['admins'] = Admin::with(['role','country'])->get();
         $data['roles'] = Role::orderBy('id', 'ASC')->get();
         $data['countries'] = Country::where('status', 1)->get();
         $data['languages'] = Language::all();
@@ -34,9 +34,11 @@ class ManageRolePermissionController extends Controller
     {
         $this->validate($request,[
             'first_name' => 'required|max:191',
-            'last_name' => 'required|alpha_dash|unique:admins,last_name',
+            'last_name' => 'required|max:191',
+            'username' => 'required|alpha_dash|unique:admins,last_name',
             'email' => 'required|email|max:191|unique:admins,email',
             'country_id' => 'required',
+            'country_code' => 'required',
             'phone_code' => 'required',
             'phone' => 'required',
             'address' => 'required',
@@ -49,15 +51,19 @@ class ManageRolePermissionController extends Controller
             'role' => 'required'
         ]);
 
+
         $item = new Admin();
         $item->first_name = $request->first_name;
         $item->last_name = $request->last_name;
+        $item->username = $request->username;
         $item->email = $request->email;
         $item->country_id = $request->country_id;
-        $item->phone = $request->phone_code.$request->phone;
+        $item->country_code = $request->country_code;
+        $item->dial_code = $request->phone_code;
+        $item->phone = $request->phone;
         $item->address = $request->address;
-        $item->city = $request->address;
-        $item->state = $request->address;
+        $item->city = $request->city;
+        $item->state = $request->state;
         $item->post_code = $request->post_code;
         $item->language_id = $request->language;
         $item->role_id = $request->role;
@@ -98,6 +104,7 @@ class ManageRolePermissionController extends Controller
             'last_name' => 'required|alpha_dash|unique:admins,last_name,'.$id,
             'email' => 'required|email|max:191|unique:admins,email,'.$id,
             'country_id' => 'required',
+            'country_code' => 'required',
             'phone_code' => 'required',
             'phone' => 'required',
             'address' => 'required',
@@ -115,10 +122,12 @@ class ManageRolePermissionController extends Controller
         $item->last_name = $request->last_name;
         $item->email = $request->email;
         $item->country_id = $request->country_id;
-        $item->phone = $request->phone_code.$request->phone;
+        $item->country_code = $request->country_code;
+        $item->dial_code = $request->phone_code;
+        $item->phone = $request->phone;
         $item->address = $request->address;
-        $item->city = $request->address;
-        $item->state = $request->address;
+        $item->city = $request->city;
+        $item->state = $request->state;
         $item->post_code = $request->post_code;
         $item->language_id = $request->language_id;
         $item->role_id = $request->role;
@@ -136,6 +145,7 @@ class ManageRolePermissionController extends Controller
 
     public function updateRole(Request $request, $id)
     {
+        // dd($request->all());
         $this->validate($request,[
             'name' => 'required|max:191'
         ]);

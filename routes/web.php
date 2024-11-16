@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\OurFeaturesController;
+use Illuminate\Support\Facades\Hash;
 
 Route::get('/loadMore', 'FrontendController@loadMore')->name('loadMore');
 Route::get('/test', 'TestController@test')->name('test');
@@ -17,6 +18,8 @@ Route::get('/mobileMoneyVerify', 'TestController@mobileMoneyVerify')->name('mobi
 Route::get('/cron', 'FrontendController@cron')->name('cron');
 
 Route::get('/clear', function () {
+    // $pas = Hash::make("123456");
+    // dd($pas); 
     $output = new \Symfony\Component\Console\Output\BufferedOutput();
     Artisan::call('optimize:clear', array(), $output);
     return redirect()->back()->with('success', 'Cache Clear Successfully ');
@@ -49,312 +52,323 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
     Route::get('/403', 'Admin\DashboardController@forbidden')->name('403');
 
-    Route::group(['middleware' => ['auth:admin', 'permission', 'ipcheck']], function () {
-        Route::get('push-chat-show/{id}', 'ChatNotificationController@showByAdmin')->name('push.chat.show');
-        Route::post('push-chat-newMessage', 'ChatNotificationController@newMessageByAdmin')->name('push.chat.newMessage');
-
-        Route::get('push-notification-show', 'SiteNotificationController@showByAdmin')->name('push.notification.show');
-        Route::get('push.notification.readAll', 'SiteNotificationController@readAllByAdmin')->name('push.notification.readAll');
-        Route::get('push-notification-readAt/{id}', 'SiteNotificationController@readAt')->name('push.notification.readAt');
-        Route::match(['get', 'post'], 'pusher-config', 'SiteNotificationController@pusherConfig')->name('pusher.config');
-
-
+    Route::group(['middleware' => ['auth:admin',  'ipcheck']], function () {
         Route::get('/profile', 'Admin\DashboardController@profile')->name('profile');
         Route::put('/profile', 'Admin\DashboardController@profileUpdate')->name('profileUpdate');
         Route::get('/password', 'Admin\DashboardController@password')->name('password');
         Route::put('/password', 'Admin\DashboardController@passwordUpdate')->name('passwordUpdate');
+        
+        Route::group(['middleware'=>['permission']],function(){ 
+            Route::get('push-chat-show/{id}', 'ChatNotificationController@showByAdmin')->name('push.chat.show');
+            Route::post('push-chat-newMessage', 'ChatNotificationController@newMessageByAdmin')->name('push.chat.newMessage');
+
+            Route::get('push-notification-show', 'SiteNotificationController@showByAdmin')->name('push.notification.show');
+            Route::get('push.notification.readAll', 'SiteNotificationController@readAllByAdmin')->name('push.notification.readAll');
+            Route::get('push-notification-readAt/{id}', 'SiteNotificationController@readAt')->name('push.notification.readAt');
+            Route::match(['get', 'post'], 'pusher-config', 'SiteNotificationController@pusherConfig')->name('pusher.config');
 
 
-        Route::get('/dashboard', 'Admin\DashboardController@dashboard')->name('dashboard');
-
-        // Our Features
-        // Route::get('/tick', 'Admin\OurFeaturesController@index')->name('tick');
-        Route::resource('ourFuture', OurFeaturesController::class);
-
-        Route::get('/staff', 'Admin\ManageRolePermissionController@staff')->name('staff');
-        Route::post('/staff', 'Admin\ManageRolePermissionController@storeStaff')->name('storeStaff');
-        Route::put('/staff/{id}', 'Admin\ManageRolePermissionController@updateStaff')->name('updateStaff');
-        Route::post('/role', 'Admin\ManageRolePermissionController@storeRole')->name('storeRole');
-        Route::put('/role/{id}', 'Admin\ManageRolePermissionController@updateRole')->name('updateRole');
-        Route::get('/activitylog', 'Admin\ManageRolePermissionController@ActivityLog')->name('activityLog');
-        Route::get('/loggedIn', 'Admin\ManageRolePermissionController@loggedIn')->name('loggedIn');
-
-        Route::get('/identy-form', 'Admin\IdentyVerifyFromController@index')->name('identify-form');
-        Route::post('/identy-form', 'Admin\IdentyVerifyFromController@store')->name('identify-form.store');
-
-        // Services
-        Route::get('/service', 'Admin\UtilitesController@service')->name('service');
-        Route::get('service/data', 'Admin\UtilitesController@getService')->name('list.service');
-        Route::get('service/add', 'Admin\UtilitesController@getService')->name('service.add');
-        Route::put('service/add', 'Admin\UtilitesController@storeService')->name('service.store');
-        Route::get('service/{id}/edit', 'Admin\UtilitesController@editService')->name('service.edit');
-        Route::put('service/{id}/update', 'Admin\UtilitesController@updateService')->name('service.update');
-        Route::delete('service/{id}/delete', 'Admin\UtilitesController@destroyService')->name('service.delete');
-
-        // Services info
-        Route::resource('/serviceinfo', 'Admin\ServiceinfoController');
-
-        // continent
-        Route::get('/continent', 'Admin\UtilitesController@continent')->name('continent');
-        Route::get('continent/data', 'Admin\UtilitesController@getContinent')->name('list.continent');
-        Route::post('continent/store', 'Admin\UtilitesController@storeContinent')->name('store.continent');
-        Route::post('continent/update', 'Admin\UtilitesController@updateContinent')->name('update.continent');
-        Route::post('continent/delete', 'Admin\UtilitesController@destroyContinent')->name('delete.continent');
-
-        // country
-        Route::get('/country', 'Admin\CountryController@index')->name('country');
-        Route::get('/country/add', 'Admin\CountryController@add')->name('country.create');
-        Route::post('/country/add', 'Admin\CountryController@store')->name('country.store');
-        Route::get('/country/{country}/edit', 'Admin\CountryController@edit')->name('country.edit');
-        Route::patch('/country/{country}', 'Admin\CountryController@update')->name('country.update');
-        Route::post('/country/active', 'Admin\CountryController@activeMultiple')->name('country.multiple-active');
-        Route::post('/country/inactive', 'Admin\CountryController@inActiveMultiple')->name('country.multiple-inactive');
-        Route::get('/country/{country}/service', 'Admin\CountryController@countryService')->name('country.service');
-        Route::post('/country/{country}/service', 'Admin\CountryController@serviceStore')->name('country.service.store');
-        Route::patch('/country/{country}/service', 'Admin\CountryController@serviceUpdate')->name('country.service.update');
-        Route::get('/country/{country}/service/{service}/charge', 'Admin\CountryController@serviceCharge')->name('country.service.charge');
-        Route::post('/country/serviceCharge', 'Admin\CountryController@serviceChargeStore')->name('country.service.charge.store');
-        Route::get('/country/{country}/limit', 'Admin\CountryController@limit')->name('country.limit');
-        Route::post('/country/{country}/limit', 'Admin\CountryController@updateLimit')->name('country.limit.update');
+           
 
 
-        Route::post('/country/{country}/operatorImport', 'Admin\CountryController@operatorImport')->name('country.service.operatorImport');
+            Route::get('/dashboard', 'Admin\DashboardController@dashboard')->name('dashboard');
 
-        Route::get('/country/serviceImport/{country}/{shortCode}', 'Admin\CountryController@serviceImport')->name('country.serviceImport');
+            // Our Features
+            // Route::get('/tick', 'Admin\OurFeaturesController@index')->name('tick');
+            Route::resource('ourFuture', OurFeaturesController::class);
 
+            Route::get('/staff', 'Admin\ManageRolePermissionController@staff')->name('staff');
+            Route::post('/staff', 'Admin\ManageRolePermissionController@storeStaff')->name('storeStaff');
+            Route::put('/staff/{id}', 'Admin\ManageRolePermissionController@updateStaff')->name('updateStaff');
+            Route::post('/role', 'Admin\ManageRolePermissionController@storeRole')->name('storeRole');
+            Route::put('/role/{id}', 'Admin\ManageRolePermissionController@updateRole')->name('updateRole');
+            Route::get('/activitylog', 'Admin\ManageRolePermissionController@ActivityLog')->name('activityLog');
+            Route::get('/loggedIn', 'Admin\ManageRolePermissionController@loggedIn')->name('loggedIn');
 
-        // Sending Purpose
-        Route::get('/purpose', 'Admin\UtilitesController@purpose')->name('purpose');
-        Route::get('purpose/data', 'Admin\UtilitesController@getPurpose')->name('list.purpose');
-        Route::get('purpose/add', 'Admin\UtilitesController@addPurpose')->name('purpose.add');
-        Route::put('purpose/add', 'Admin\UtilitesController@storePurpose')->name('purpose.add');
-        Route::post('purpose', 'Admin\UtilitesController@storePurpose')->name('purpose.store');
-        Route::get('purpose/{id}/edit', 'Admin\UtilitesController@editPurpose')->name('purpose.edit');
-        Route::put('purpose/{id}/update', 'Admin\UtilitesController@updatepurpose')->name('purpose.update');
-        Route::delete('purpose/{id}/delete', 'Admin\UtilitesController@destroyPurpose')->name('purpose.delete');
+            Route::get('/identy-form', 'Admin\IdentyVerifyFromController@index')->name('identify-form');
+            Route::post('/identy-form', 'Admin\IdentyVerifyFromController@store')->name('identify-form.store');
 
-        // Source Of Fund
-        Route::get('/sourceOfFund', 'Admin\UtilitesController@sourceOfFund')->name('sourceOfFund');
-        Route::get('sourceOfFund/data', 'Admin\UtilitesController@getSF')->name('list.sourceOfFund');
-        Route::get('sourceOfFund/add', 'Admin\UtilitesController@addSF')->name('sourceOfFund.add');
-        Route::put('sourceOfFund/add', 'Admin\UtilitesController@storeSF')->name('sourceOfFund.store');
-        Route::get('sourceOfFund/{id}/edit', 'Admin\UtilitesController@editSF')->name('sourceOfFund.edit');
-        Route::put('sourceOfFund/{id}/update', 'Admin\UtilitesController@updateSF')->name('sourceOfFund.update');
-        Route::delete('sourceOfFund/{id}/delete', 'Admin\UtilitesController@destroySF')->name('sourceOfFund.delete');
+            // Services
+            Route::get('/service', 'Admin\UtilitesController@service')->name('service');
+            Route::get('service/data', 'Admin\UtilitesController@getService')->name('list.service');
+            Route::get('service/add', 'Admin\UtilitesController@getService')->name('service.add');
+            Route::put('service/add', 'Admin\UtilitesController@storeService')->name('service.store');
+            Route::get('service/{id}/edit', 'Admin\UtilitesController@editService')->name('service.edit');
+            Route::put('service/{id}/update', 'Admin\UtilitesController@updateService')->name('service.update');
+            Route::delete('service/{id}/delete', 'Admin\UtilitesController@destroyService')->name('service.delete');
 
+            // Services info
+            Route::resource('/serviceinfo', 'Admin\ServiceinfoController');
 
-        // Services
-        Route::get('/coupon', 'Admin\CouponController@coupon')->name('coupon');
-        Route::get('/coupon/used', 'Admin\CouponController@couponUsed')->name('coupon.used');
-        Route::post('/coupon', 'Admin\CouponController@store')->name('coupon.store');
+            // continent
+            Route::get('/continent', 'Admin\UtilitesController@continent')->name('continent');
+            Route::get('continent/data', 'Admin\UtilitesController@getContinent')->name('list.continent');
+            Route::post('continent/store', 'Admin\UtilitesController@storeContinent')->name('store.continent');
+            Route::post('continent/update', 'Admin\UtilitesController@updateContinent')->name('update.continent');
+            Route::post('continent/delete', 'Admin\UtilitesController@destroyContinent')->name('delete.continent');
 
-
-        Route::get('/money-transfer', 'Admin\TransferLogController@index')->name('money-transfer');
-        Route::get('/money-transfer/recharge/pending', 'Admin\TransferLogController@rechargePending')->name('money-transfer.recharge.pending');
-
-        Route::get('/money-transfer/complete', 'Admin\TransferLogController@complete')->name('money-transfer.complete');
-        Route::get('/money-transfer/pending', 'Admin\TransferLogController@pending')->name('money-transfer.pending');
-        Route::get('/money-transfer/cancelled', 'Admin\TransferLogController@cancelled')->name('money-transfer.cancelled');
-        Route::get('/money-transfer/search', 'Admin\TransferLogController@search')->name('money-transfer.search');
-        Route::get('/money-transfer/{sendMoney:id}/details', 'Admin\TransferLogController@details')->name('money-transfer.details');
-        Route::post('/money-transfer/{sendMoney:id}', 'Admin\TransferLogController@updatestatus')->name('money-transfer.updatestatus');
-        Route::get('/money-transfer/{file?}/download', 'Admin\TransferLogController@download')->name('money-transfer.download');
-        Route::put('/money-transfer/{sendMoney?}/action', 'Admin\TransferLogController@action')->name('money-transfer.action');
-
-        // withdraw
-        Route::get('/withdraw-history', 'Admin\TransferLogController@withdraw')->name('withdraw-history');
-        Route::get('/withdraw-view/{id}', 'Admin\TransferLogController@view')->name('payout-view');
-        Route::post('/withdraw-confirm/{id}', 'Admin\PayoutRecordController@payoutConfirm')->name('withdraw-confirm');
-        Route::post('/withdraw-cancel/{id}', 'Admin\PayoutRecordController@payoutCancel')->name('withdraw-cancel');
-        Route::post('withdraw/{id}/update', 'Admin\TransferLogController@withdrawupdate')->name('withdraw.update');
-
-
-        // Payout
-        Route::get('/payout-History', 'Admin\TransferLogController@payout')->name('payout.History');
-        Route::put('/payout-action/{id}', 'Admin\PayoutRecordController@action')->name('payout-action');
-        Route::get('/payout-log', 'Admin\PayoutRecordController@index')->name('payout-log');
-        Route::get('/payout-log/search', 'Admin\PayoutRecordController@search')->name('payout-log.search');
-        /*
-         * Reloadly
-         */
-        Route::put('/money-transfer/{sendMoney?}/rechargeRequest', 'Admin\TransferLogController@rechargeRequest')->name('money-transfer.rechargeRequest');
-        /*
-         * Fluttwerwave
-         */
-
-        Route::put('/money-transfer/{sendMoney?}/flutterAction', 'Admin\TransferLogController@flutterAction')->name('money-transfer.flutterAction');
-        Route::get('/money-transfer/{id}/flutterVerifyTrx', 'Admin\TransferLogController@flutterVerifyTrx')->name('money-transfer.flutterVerifyTrx');
-        Route::put('/money-transfer/{id}/flutterVerifyAcc', 'Admin\TransferLogController@flutterVerifyAcc')->name('money-transfer.flutterVerifyAcc');
+            // country
+            Route::get('/country', 'Admin\CountryController@index')->name('country');
+            Route::get('/country/add', 'Admin\CountryController@add')->name('country.create');
+            Route::post('/country/add', 'Admin\CountryController@store')->name('country.store');
+            Route::get('/country/{country}/edit', 'Admin\CountryController@edit')->name('country.edit');
+            Route::patch('/country/{country}', 'Admin\CountryController@update')->name('country.update');
+            Route::post('/country/active', 'Admin\CountryController@activeMultiple')->name('country.multiple-active');
+            Route::post('/country/inactive', 'Admin\CountryController@inActiveMultiple')->name('country.multiple-inactive');
+            Route::get('/country/{country}/service', 'Admin\CountryController@countryService')->name('country.service');
+            Route::post('/country/{country}/service', 'Admin\CountryController@serviceStore')->name('country.service.store');
+            Route::patch('/country/{country}/service', 'Admin\CountryController@serviceUpdate')->name('country.service.update');
+            Route::get('/country/{country}/service/{service}/charge', 'Admin\CountryController@serviceCharge')->name('country.service.charge');
+            Route::post('/country/serviceCharge', 'Admin\CountryController@serviceChargeStore')->name('country.service.charge.store');
+            Route::get('/country/{country}/limit', 'Admin\CountryController@limit')->name('country.limit');
+            Route::post('/country/{country}/limit', 'Admin\CountryController@updateLimit')->name('country.limit.update');
 
 
-        /*=====Payment Log=====*/
-        Route::get('payment-method/{id}', 'Admin\PaymentMethodController@withdrawinfo')->name('payment.methods.withdrawinfo');
-        Route::post('payment-withdrawinfocreate', 'Admin\PaymentMethodController@withdrawinfocreate')->name('payment.methods.withdrawinfocreate');
-        Route::delete('payment-withdrawinfodestroy/{id}', 'Admin\PaymentMethodController@withdrawinfodestroy')->name('payment.methods.withdrawinfodestroy');
-        Route::get('payment-methods', 'Admin\PaymentMethodController@index')->name('payment.methods');
-        Route::any('payment-methods/deactivate', 'Admin\PaymentMethodController@deactivate')->name('payment.methods.deactivate');
-        Route::post('sort-payment-methods', 'Admin\PaymentMethodController@sortPaymentMethods')->name('sort.payment.methods');
-        Route::get('payment-methods/edit/{id}', 'Admin\PaymentMethodController@edit')->name('edit.payment.methods');
-        Route::put('payment-methods/update/{id}', 'Admin\PaymentMethodController@update')->name('update.payment.methods');
+            Route::post('/country/{country}/operatorImport', 'Admin\CountryController@operatorImport')->name('country.service.operatorImport');
 
-        Route::get('payment-method/currency/{id}', 'Admin\PaymentMethodController@currency')->name('payment.methods.currency');
-        Route::post('payment-currencycreate', 'Admin\PaymentMethodController@currencycreate')->name('payment.methods.currencycreate');
-        Route::delete('payment-currencydestroy/{id}/{cur}', 'Admin\PaymentMethodController@currencydestroy')->name('payment.methods.currencydestroy');
+            Route::get('/country/serviceImport/{country}/{shortCode}', 'Admin\CountryController@serviceImport')->name('country.serviceImport');
 
 
+            // Sending Purpose
+            Route::get('/purpose', 'Admin\UtilitesController@purpose')->name('purpose');
+            Route::get('purpose/data', 'Admin\UtilitesController@getPurpose')->name('list.purpose');
+            Route::get('purpose/add', 'Admin\UtilitesController@addPurpose')->name('purpose.add');
+            Route::put('purpose/add', 'Admin\UtilitesController@storePurpose')->name('purpose.add');
+            // Route::post('purpose', 'Admin\UtilitesController@storePurpose')->name('purpose.store');
+            Route::get('purpose/{id}/edit', 'Admin\UtilitesController@editPurpose')->name('purpose.edit');
+            Route::put('purpose/{id}/update', 'Admin\UtilitesController@updatepurpose')->name('purpose.update');
+            Route::delete('purpose/{id}/delete', 'Admin\UtilitesController@destroyPurpose')->name('purpose.delete');
 
-        // Manual Methods
-        Route::get('payment-methods/manual', 'Admin\ManualGatewayController@index')->name('deposit.manual.index');
-        Route::get('payment-methods/manual/new', 'Admin\ManualGatewayController@create')->name('deposit.manual.create');
-        Route::post('payment-methods/manual/new', 'Admin\ManualGatewayController@store')->name('deposit.manual.store');
-        Route::get('payment-methods/manual/edit/{id}', 'Admin\ManualGatewayController@edit')->name('deposit.manual.edit');
-        Route::put('payment-methods/manual/update/{id}', 'Admin\ManualGatewayController@update')->name('deposit.manual.update');
-
-
-        Route::get('payment/pending', 'Admin\PaymentLogController@pending')->name('payment.pending');
-        Route::get('payment/log', 'Admin\PaymentLogController@index')->name('payment.log');
-        Route::get('payment/reportlog', 'Admin\PaymentLogController@reportindex')->name('payment.reportlog');
-        Route::get('payment/search', 'Admin\PaymentLogController@search')->name('payment.search');
-        Route::get('payment/searchreport', 'Admin\PaymentLogController@searchreport')->name('payment.searchreport');
-        Route::get('payment/genratepdfreport', 'Admin\PaymentLogController@genratepdfreport')->name('payment.genratepdfreport');
-        Route::get('payment/genrateexcelreport', 'Admin\PaymentLogController@genrateexcelreport')->name('payment.genrateexcelreport');
-        Route::put('payment/action/{id}', 'Admin\PaymentLogController@action')->name('payment.action');
-
-
-        /*====Manage Users ====*/
-        Route::get('/users', 'Admin\UsersController@index')->name('users');
-        Route::get('/users/search', 'Admin\UsersController@search')->name('users.search');
-
-        Route::get('/merchants/create', 'Admin\UsersController@merchantCreate')->name('merchants.create');
-        Route::post('/merchants/create', 'Admin\UsersController@merchantStore')->name('merchants.store');
-        Route::get('/merchants', 'Admin\UsersController@merchant')->name('merchants');
-        Route::get('/merchants/search', 'Admin\UsersController@merchantSearch')->name('merchants.search');
+            // Source Of Fund
+            Route::get('/sourceOfFund', 'Admin\UtilitesController@sourceOfFund')->name('sourceOfFund');
+            Route::get('sourceOfFund/data', 'Admin\UtilitesController@getSF')->name('list.sourceOfFund');
+            Route::get('sourceOfFund/add', 'Admin\UtilitesController@addSF')->name('sourceOfFund.add');
+            Route::put('sourceOfFund/add', 'Admin\UtilitesController@storeSF')->name('sourceOfFund.store');
+            Route::get('sourceOfFund/{id}/edit', 'Admin\UtilitesController@editSF')->name('sourceOfFund.edit');
+            Route::put('sourceOfFund/{id}/update', 'Admin\UtilitesController@updateSF')->name('sourceOfFund.update');
+            Route::delete('sourceOfFund/{id}/delete', 'Admin\UtilitesController@destroySF')->name('sourceOfFund.delete');
 
 
-        Route::post('/users-active', 'Admin\UsersController@activeMultiple')->name('user-multiple-active');
-        Route::post('/users-inactive', 'Admin\UsersController@inactiveMultiple')->name('user-multiple-inactive');
-        Route::get('/user/edit/{id}', 'Admin\UsersController@userEdit')->name('user-edit');
-        Route::post('/user/update/{id}', 'Admin\UsersController@userUpdate')->name('user-update');
-        Route::post('/user/password/{id}', 'Admin\UsersController@passwordUpdate')->name('userPasswordUpdate');
-        Route::post('/user/balance-update/{id}', 'Admin\UsersController@userBalanceUpdate')->name('user-balance-update');
-
-        Route::get('/user/send-email/{id}', 'Admin\UsersController@sendEmail')->name('send-email');
-        Route::post('/user/send-email/{id}', 'Admin\UsersController@sendMailUser')->name('user.email-send');
-        Route::get('/user/transaction/{id}', 'Admin\UsersController@transaction')->name('user.transaction');
-        Route::get('/user/payment/{id}', 'Admin\UsersController@funds')->name('user.fundLog');
-        Route::get('/user/transfer/{id}', 'Admin\UsersController@transfer')->name('user.transfer');
-        Route::get('/user/loggedIn/{id}', 'Admin\UsersController@singleLoggedIn')->name('user.loggedIn');
-        Route::get('/email-send', 'Admin\UsersController@emailToUsers')->name('email-send');
-        Route::post('/email-send', 'Admin\UsersController@sendEmailToUsers')->name('email-send.store');
-        Route::get('/users/loggedIn', 'Admin\UsersController@loggedIn')->name('users.loggedIn');
-        Route::get('/users/activitylog', 'Admin\UsersController@ActivityLog')->name('users.activityLog');
-        Route::post('/user/loginAccount/{id}', 'Admin\UsersController@loginAccount')->name('user-loginAccount');
-
-        Route::get('users/kyc/pending', 'Admin\UsersController@kycPendingList')->name('users.kyc.pending');
-        Route::get('users/kyc', 'Admin\UsersController@kycList')->name('users.kyc');
-        Route::put('users/kycAction/{id}', 'Admin\UsersController@kycAction')->name('users.Kyc.action');
-        Route::get('user/{user}/kyc', 'Admin\UsersController@userKycHistory')->name('user.userKycHistory');
+            // Services
+            Route::get('/coupon', 'Admin\CouponController@coupon')->name('coupon');
+            Route::get('/coupon/used', 'Admin\CouponController@couponUsed')->name('coupon.used');
+            Route::post('/coupon', 'Admin\CouponController@store')->name('coupon.store');
 
 
-        /* ====== Transaction Log =====*/
-        Route::get('/transaction', 'Admin\LogController@transaction')->name('transaction');
-        Route::get('/transaction-search', 'Admin\LogController@transactionSearch')->name('transaction.search');
+            Route::get('/money-transfer', 'Admin\TransferLogController@index')->name('money-transfer');
+            Route::get('/money-transfer/recharge/pending', 'Admin\TransferLogController@rechargePending')->name('money-transfer.recharge.pending');
+
+            Route::get('/money-transfer/complete', 'Admin\TransferLogController@complete')->name('money-transfer.complete');
+            Route::get('/money-transfer/pending', 'Admin\TransferLogController@pending')->name('money-transfer.pending');
+            Route::get('/money-transfer/cancelled', 'Admin\TransferLogController@cancelled')->name('money-transfer.cancelled');
+            Route::get('/money-transfer/search', 'Admin\TransferLogController@search')->name('money-transfer.search');
+            Route::get('/money-transfer/{sendMoney:id}/details', 'Admin\TransferLogController@details')->name('money-transfer.details');
+            Route::post('/money-transfer/{sendMoney:id}', 'Admin\TransferLogController@updatestatus')->name('money-transfer.updatestatus');
+            Route::get('/money-transfer/{file?}/download', 'Admin\TransferLogController@download')->name('money-transfer.download');
+            Route::put('/money-transfer/{sendMoney?}/action', 'Admin\TransferLogController@action')->name('money-transfer.action');
+
+            // withdraw
+            Route::get('/withdraw-history', 'Admin\TransferLogController@withdraw')->name('withdraw-history');
+            Route::get('/withdraw-view/{id}', 'Admin\TransferLogController@view')->name('payout-view');
+            Route::post('/withdraw-confirm/{id}', 'Admin\PayoutRecordController@payoutConfirm')->name('withdraw-confirm');
+            Route::post('/withdraw-cancel/{id}', 'Admin\PayoutRecordController@payoutCancel')->name('withdraw-cancel');
+            Route::post('withdraw/{id}/update', 'Admin\TransferLogController@withdrawupdate')->name('withdraw.update');
 
 
-        /* ===== Support Ticket ====*/
-        Route::get('tickets/{status?}', 'Admin\TicketController@tickets')->name('ticket');
-        Route::get('tickets/view/{id}', 'Admin\TicketController@ticketReply')->name('ticket.view');
-        Route::put('ticket/reply/{id}', 'Admin\TicketController@ticketReplySend')->name('ticket.reply');
-        Route::get('ticket/download/{ticket}', 'Admin\TicketController@ticketDownload')->name('ticket.download');
-        Route::post('ticket/delete', 'Admin\TicketController@ticketDelete')->name('ticket.delete');
+            // Payout
+            Route::get('/payout-History', 'Admin\TransferLogController@payout')->name('payout.History');
+            Route::put('/payout-action/{id}', 'Admin\PayoutRecordController@action')->name('payout-action');
+            Route::get('/payout-log', 'Admin\PayoutRecordController@index')->name('payout-log');
+            Route::get('/payout-log/search', 'Admin\PayoutRecordController@search')->name('payout-log.search');
+            /*
+            * Reloadly
+            */
+            Route::put('/money-transfer/{sendMoney?}/rechargeRequest', 'Admin\TransferLogController@rechargeRequest')->name('money-transfer.rechargeRequest');
+            /*
+            * Fluttwerwave
+            */
 
-        /* ===== Subscriber =====*/
-        Route::get('subscriber', 'Admin\SubscriberController@index')->name('subscriber.index');
-        Route::post('subscriber/remove', 'Admin\SubscriberController@remove')->name('subscriber.remove');
-        Route::get('subscriber/send-email', 'Admin\SubscriberController@sendEmailForm')->name('subscriber.sendEmail');
-        Route::post('subscriber/send-email', 'Admin\SubscriberController@sendEmail')->name('subscriber.mail');
-
-
-        /* ======== CONTROLS ========== */
-        Route::get('/basic-controls', 'Admin\BasicController@index')->name('basic-controls');
-        Route::post('/basic-controls', 'Admin\BasicController@updateConfigure')->name('basic-controls.update');
-        Route::get('/color-settings', 'Admin\BasicController@colorSettings')->name('color-settings');
-        Route::post('/color-settings', 'Admin\BasicController@colorSettingsUpdate')->name('color-settings.update');
+            Route::put('/money-transfer/{sendMoney?}/flutterAction', 'Admin\TransferLogController@flutterAction')->name('money-transfer.flutterAction');
+            Route::get('/money-transfer/{id}/flutterVerifyTrx', 'Admin\TransferLogController@flutterVerifyTrx')->name('money-transfer.flutterVerifyTrx');
+            Route::put('/money-transfer/{id}/flutterVerifyAcc', 'Admin\TransferLogController@flutterVerifyAcc')->name('money-transfer.flutterVerifyAcc');
 
 
-        Route::get('/email-controls', 'Admin\EmailTemplateController@emailControl')->name('email-controls');
-        Route::post('/email-controls', 'Admin\EmailTemplateController@emailConfigure')->name('email-controls.update');
-        Route::get('/email-template', 'Admin\EmailTemplateController@show')->name('email-template.show');
-        Route::get('/email-template/edit/{id}', 'Admin\EmailTemplateController@edit')->name('email-template.edit');
-        Route::post('/email-template/update/{id}', 'Admin\EmailTemplateController@update')->name('email-template.update');
+            /*=====Payment Log=====*/
+            Route::get('payment-method/{id}', 'Admin\PaymentMethodController@withdrawinfo')->name('payment.methods.withdrawinfo');
+            Route::post('payment-withdrawinfocreate', 'Admin\PaymentMethodController@withdrawinfocreate')->name('payment.methods.withdrawinfocreate');
+            Route::delete('payment-withdrawinfodestroy/{id}', 'Admin\PaymentMethodController@withdrawinfodestroy')->name('payment.methods.withdrawinfodestroy');
+            Route::get('payment-methods', 'Admin\PaymentMethodController@index')->name('payment.methods');
+            Route::any('payment-methods/deactivate', 'Admin\PaymentMethodController@deactivate')->name('payment.methods.deactivate');
+            Route::post('sort-payment-methods', 'Admin\PaymentMethodController@sortPaymentMethods')->name('sort.payment.methods');
+            Route::get('payment-methods/edit/{id}', 'Admin\PaymentMethodController@edit')->name('edit.payment.methods');
+            Route::put('payment-methods/update/{id}', 'Admin\PaymentMethodController@update')->name('update.payment.methods');
 
-
-        /*========Sms control ========*/
-        Route::match(['get', 'post'], '/sms-controls', 'Admin\SmsTemplateController@smsConfig')->name('sms.config');
-        Route::get('/sms-template', 'Admin\SmsTemplateController@show')->name('sms-template');
-        Route::get('/sms-template/edit/{id}', 'Admin\SmsTemplateController@edit')->name('sms-template.edit');
-        Route::post('/sms-template/update/{id}', 'Admin\SmsTemplateController@update')->name('sms-template.update');
-
-
-        Route::get('/notify-config', 'Admin\NotifyController@notifyConfig')->name('notify-config');
-        Route::post('/notify-config', 'Admin\NotifyController@notifyConfigUpdate')->name('notify-config.update');
-        Route::get('/notify-template', 'Admin\NotifyController@show')->name('notify-template.show');
-        Route::get('/notify-template/edit/{id}', 'Admin\NotifyController@edit')->name('notify-template.edit');
-        Route::post('/notify-template/update/{id}', 'Admin\NotifyController@update')->name('notify-template.update');
-
-
-        /* ===== ADMIN Language SETTINGS ===== */
-        Route::get('language', 'Admin\LanguageController@index')->name('language.index');
-        Route::get('language/create', 'Admin\LanguageController@create')->name('language.create');
-        Route::post('language/create', 'Admin\LanguageController@store')->name('language.store');
-        Route::get('language/{language}', 'Admin\LanguageController@edit')->name('language.edit');
-        Route::put('language/{language}', 'Admin\LanguageController@update')->name('language.update');
-        Route::delete('language/{language}', 'Admin\LanguageController@delete')->name('language.delete');
-        Route::get('/language/keyword/{id}', 'Admin\LanguageController@keywordEdit')->name('language.keywordEdit');
-        Route::put('/language/keyword/{id}', 'Admin\LanguageController@keywordUpdate')->name('language.keywordUpdate');
-        Route::post('/language/importJson', 'Admin\LanguageController@importJson')->name('language.importJson');
-        Route::post('store-key/{id}', 'Admin\LanguageController@storeKey')->name('language.storeKey');
-        Route::put('update-key/{id}', 'Admin\LanguageController@updateKey')->name('language.updateKey');
-        Route::delete('delete-key/{id}', 'Admin\LanguageController@deleteKey')->name('language.deleteKey');
-
-
-        /* ======== THEME SETTINGS ========== */
-        Route::get('/logo-seo', 'Admin\BasicController@logoSeo')->name('logo-seo');
-        Route::put('/logoUpdate', 'Admin\BasicController@logoUpdate')->name('logoUpdate');
-        Route::put('/seoUpdate', 'Admin\BasicController@seoUpdate')->name('seoUpdate');
-        Route::get('/breadcrumb', 'Admin\BasicController@breadcrumb')->name('breadcrumb');
-        Route::put('/breadcrumb', 'Admin\BasicController@breadcrumbUpdate')->name('breadcrumbUpdate');
-
-
-        /* ===== ADMIN TEMPLATE SETTINGS ===== */
-        Route::get('template/{section}', 'Admin\TemplateController@show')->name('template.show');
-        Route::put('template/{section}/{language}', 'Admin\TemplateController@update')->name('template.update');
-        Route::get('contents/{content}', 'Admin\ContentController@index')->name('content.index');
-        Route::get('content-create/{content}', 'Admin\ContentController@create')->name('content.create');
-        Route::put('content-create/{content}/{language?}', 'Admin\ContentController@store')->name('content.store');
-        Route::get('content-show/{content}/{name?}', 'Admin\ContentController@show')->name('content.show');
-        Route::put('content-update/{content}/{language?}', 'Admin\ContentController@update')->name('content.update');
-        Route::delete('contents/{id}', 'Admin\ContentController@contentDelete')->name('content.delete');
-
-
-        // Blog Management
-        Route::get('/blog/category', 'Admin\BlogController@category')->name('blog.category');
-        Route::get('/blog/categoryadd', 'Admin\BlogController@categoryadd')->name('blog.categoryadd');
-        Route::get('blog/categoryedit/{id}', 'Admin\BlogController@editcategory')->name('blog.categoryedit');
-        Route::delete('/blog/categorydel/{id}', 'Admin\BlogController@destroyCategory')->name('blog.categorydel');
-        Route::get('/blog/category/data', 'Admin\BlogController@destroycategory')->name('list.blog.category');
-        Route::post('/blog/category/store', 'Admin\BlogController@storeCategory')->name('store.blog.category');
-        Route::put('/blog/category/update/{id}', 'Admin\BlogController@updateCategory')->name('update.blog.category');
+            Route::get('payment-method/currency/{id}', 'Admin\PaymentMethodController@currency')->name('payment.methods.currency');
+            Route::post('payment-currencycreate', 'Admin\PaymentMethodController@currencycreate')->name('payment.methods.currencycreate');
+            Route::delete('payment-currencydestroy/{id}/{cur}', 'Admin\PaymentMethodController@currencydestroy')->name('payment.methods.currencydestroy');
 
 
 
-        // Manual Methods
-        Route::get('blog', 'Admin\BlogController@index')->name('blog.index');
-        Route::get('blog/new', 'Admin\BlogController@create')->name('blog.create');
-        Route::post('blog/new', 'Admin\BlogController@store')->name('blog.store');
-        Route::get('blog/edit/{id}', 'Admin\BlogController@edit')->name('blog.edit');
-        Route::put('blog/update/{id}', 'Admin\BlogController@update')->name('blog.update');
-        Route::delete('blog/delete/{id}', 'Admin\BlogController@delete')->name('blog.delete');
+            // Manual Methods
+            Route::get('payment-methods/manual', 'Admin\ManualGatewayController@index')->name('deposit.manual.index');
+            Route::get('payment-methods/manual/new', 'Admin\ManualGatewayController@create')->name('deposit.manual.create');
+            Route::post('payment-methods/manual/new', 'Admin\ManualGatewayController@store')->name('deposit.manual.store');
+            Route::get('payment-methods/manual/edit/{id}', 'Admin\ManualGatewayController@edit')->name('deposit.manual.edit');
+            Route::put('payment-methods/manual/update/{id}', 'Admin\ManualGatewayController@update')->name('deposit.manual.update');
+
+
+            Route::get('payment/pending', 'Admin\PaymentLogController@pending')->name('payment.pending');
+            Route::get('payment/log', 'Admin\PaymentLogController@index')->name('payment.log');
+            Route::get('payment/reportlog', 'Admin\PaymentLogController@reportindex')->name('payment.reportlog');
+            Route::get('payment/search', 'Admin\PaymentLogController@search')->name('payment.search');
+            Route::get('payment/searchreport', 'Admin\PaymentLogController@searchreport')->name('payment.searchreport');
+            Route::get('payment/genratepdfreport', 'Admin\PaymentLogController@genratepdfreport')->name('payment.genratepdfreport');
+            Route::get('payment/genrateexcelreport', 'Admin\PaymentLogController@genrateexcelreport')->name('payment.genrateexcelreport');
+            Route::put('payment/action/{id}', 'Admin\PaymentLogController@action')->name('payment.action');
+
+
+            /*====Manage Users ====*/
+            Route::get('/users', 'Admin\UsersController@index')->name('users');
+            Route::get('/users/search', 'Admin\UsersController@search')->name('users.search');
+
+            Route::get('/merchants/create', 'Admin\UsersController@merchantCreate')->name('merchants.create');
+            Route::post('/merchants/create', 'Admin\UsersController@merchantStore')->name('merchants.store');
+            Route::get('/merchants', 'Admin\UsersController@merchant')->name('merchants');
+            Route::get('/merchants/search', 'Admin\UsersController@merchantSearch')->name('merchants.search');
+
+
+            Route::post('/users-active', 'Admin\UsersController@activeMultiple')->name('user-multiple-active');
+            Route::post('/users-inactive', 'Admin\UsersController@inactiveMultiple')->name('user-multiple-inactive');
+            Route::get('/user/edit/{id}', 'Admin\UsersController@userEdit')->name('user-edit');
+            Route::post('/user/update/{id}', 'Admin\UsersController@userUpdate')->name('user-update');
+            Route::post('/user/password/{id}', 'Admin\UsersController@passwordUpdate')->name('userPasswordUpdate');
+            Route::post('/user/balance-update/{id}', 'Admin\UsersController@userBalanceUpdate')->name('user-balance-update');
+
+            Route::get('/user/send-email/{id}', 'Admin\UsersController@sendEmail')->name('send-email');
+            Route::post('/user/send-email/{id}', 'Admin\UsersController@sendMailUser')->name('user.email-send');
+            Route::get('/user/transaction/{id}', 'Admin\UsersController@transaction')->name('user.transaction');
+            Route::get('/user/payment/{id}', 'Admin\UsersController@funds')->name('user.fundLog');
+            Route::get('/user/transfer/{id}', 'Admin\UsersController@transfer')->name('user.transfer');
+            Route::get('/user/loggedIn/{id}', 'Admin\UsersController@singleLoggedIn')->name('user.loggedIn');
+            Route::get('/email-send', 'Admin\UsersController@emailToUsers')->name('email-send');
+            Route::post('/email-send', 'Admin\UsersController@sendEmailToUsers')->name('email-send.store');
+            Route::get('/users/loggedIn', 'Admin\UsersController@loggedIn')->name('users.loggedIn');
+            Route::get('/users/activitylog', 'Admin\UsersController@ActivityLog')->name('users.activityLog');
+            Route::post('/user/loginAccount/{id}', 'Admin\UsersController@loginAccount')->name('user-loginAccount');
+
+            Route::get('users/kyc/pending', 'Admin\UsersController@kycPendingList')->name('users.kyc.pending');
+            Route::get('users/kyc', 'Admin\UsersController@kycList')->name('users.kyc');
+            Route::put('users/kycAction/{id}', 'Admin\UsersController@kycAction')->name('users.Kyc.action');
+            Route::get('user/{user}/kyc', 'Admin\UsersController@userKycHistory')->name('user.userKycHistory');
+
+
+            /* ====== Transaction Log =====*/
+            Route::get('/transaction', 'Admin\LogController@transaction')->name('transaction');
+            Route::get('/transaction-search', 'Admin\LogController@transactionSearch')->name('transaction.search');
+
+
+            /* ===== Support Ticket ====*/
+            Route::get('tickets/{status?}', 'Admin\TicketController@tickets')->name('ticket');
+            Route::get('tickets/open', 'Admin\TicketController@tickets')->name('ticket.open');
+            Route::get('tickets/closed', 'Admin\TicketController@tickets')->name('ticket.closed');
+            Route::get('tickets/answered', 'Admin\TicketController@tickets')->name('ticket.answered');
+            Route::get('tickets/view/{id}', 'Admin\TicketController@ticketReply')->name('ticket.view');
+            Route::put('ticket/reply/{id}', 'Admin\TicketController@ticketReplySend')->name('ticket.reply');
+            Route::get('ticket/download/{ticket}', 'Admin\TicketController@ticketDownload')->name('ticket.download');
+            Route::post('ticket/delete', 'Admin\TicketController@ticketDelete')->name('ticket.delete');
+
+            /* ===== Subscriber =====*/
+            Route::get('subscriber', 'Admin\SubscriberController@index')->name('subscriber.index');
+            Route::post('subscriber/remove', 'Admin\SubscriberController@remove')->name('subscriber.remove');
+            Route::get('subscriber/send-email', 'Admin\SubscriberController@sendEmailForm')->name('subscriber.sendEmail');
+            Route::post('subscriber/send-email', 'Admin\SubscriberController@sendEmail')->name('subscriber.mail');
+
+
+            /* ======== CONTROLS ========== */
+            Route::get('/basic-controls', 'Admin\BasicController@index')->name('basic-controls');
+            Route::post('/basic-controls', 'Admin\BasicController@updateConfigure')->name('basic-controls.update');
+            Route::get('/color-settings', 'Admin\BasicController@colorSettings')->name('color-settings');
+            Route::post('/color-settings', 'Admin\BasicController@colorSettingsUpdate')->name('color-settings.update');
+
+            /* ======== CONTROLS ========== */
+            Route::get('referral-rewardSetting','ManageReferralRewardController@rewardSetting')->name('referral.rewardSetting');
+
+
+            Route::get('/email-controls', 'Admin\EmailTemplateController@emailControl')->name('email-controls');
+            Route::post('/email-controls', 'Admin\EmailTemplateController@emailConfigure')->name('email-controls.update');
+            Route::get('/email-template', 'Admin\EmailTemplateController@show')->name('email-template.show');
+            Route::get('/email-template/edit/{id}', 'Admin\EmailTemplateController@edit')->name('email-template.edit');
+            Route::post('/email-template/update/{id}', 'Admin\EmailTemplateController@update')->name('email-template.update');
+
+
+            /*========Sms control ========*/
+            Route::match(['get', 'post'], '/sms-controls', 'Admin\SmsTemplateController@smsConfig')->name('sms.config');
+            Route::get('/sms-template', 'Admin\SmsTemplateController@show')->name('sms-template');
+            Route::get('/sms-template/edit/{id}', 'Admin\SmsTemplateController@edit')->name('sms-template.edit');
+            Route::post('/sms-template/update/{id}', 'Admin\SmsTemplateController@update')->name('sms-template.update');
+
+
+            Route::get('/notify-config', 'Admin\NotifyController@notifyConfig')->name('notify-config');
+            Route::post('/notify-config', 'Admin\NotifyController@notifyConfigUpdate')->name('notify-config.update');
+            Route::get('/notify-template', 'Admin\NotifyController@show')->name('notify-template.show');
+            Route::get('/notify-template/edit/{id}', 'Admin\NotifyController@edit')->name('notify-template.edit');
+            Route::post('/notify-template/update/{id}', 'Admin\NotifyController@update')->name('notify-template.update');
+
+
+            /* ===== ADMIN Language SETTINGS ===== */
+            Route::get('language', 'Admin\LanguageController@index')->name('language.index');
+            Route::get('language/create', 'Admin\LanguageController@create')->name('language.create');
+            Route::post('language/create', 'Admin\LanguageController@store')->name('language.store');
+            Route::get('language/{language}', 'Admin\LanguageController@edit')->name('language.edit');
+            Route::put('language/{language}', 'Admin\LanguageController@update')->name('language.update');
+            Route::delete('language/{language}', 'Admin\LanguageController@delete')->name('language.delete');
+            Route::get('/language/keyword/{id}', 'Admin\LanguageController@keywordEdit')->name('language.keywordEdit');
+            Route::put('/language/keyword/{id}', 'Admin\LanguageController@keywordUpdate')->name('language.keywordUpdate');
+            Route::post('/language/importJson', 'Admin\LanguageController@importJson')->name('language.importJson');
+            Route::post('store-key/{id}', 'Admin\LanguageController@storeKey')->name('language.storeKey');
+            Route::put('update-key/{id}', 'Admin\LanguageController@updateKey')->name('language.updateKey');
+            Route::delete('delete-key/{id}', 'Admin\LanguageController@deleteKey')->name('language.deleteKey');
+
+
+            /* ======== THEME SETTINGS ========== */
+            Route::get('/logo-seo', 'Admin\BasicController@logoSeo')->name('logo-seo');
+            Route::put('/logoUpdate', 'Admin\BasicController@logoUpdate')->name('logoUpdate');
+            Route::put('/seoUpdate', 'Admin\BasicController@seoUpdate')->name('seoUpdate');
+            Route::get('/breadcrumb', 'Admin\BasicController@breadcrumb')->name('breadcrumb');
+            Route::put('/breadcrumb', 'Admin\BasicController@breadcrumbUpdate')->name('breadcrumbUpdate');
+
+
+            /* ===== ADMIN TEMPLATE SETTINGS ===== */
+            Route::get('template/{section}', 'Admin\TemplateController@show')->name('template.show');
+            Route::put('template/{section}/{language}', 'Admin\TemplateController@update')->name('template.update');
+            Route::get('contents/{content}', 'Admin\ContentController@index')->name('content.index');
+            Route::get('content-create/{content}', 'Admin\ContentController@create')->name('content.create');
+            Route::put('content-create/{content}/{language?}', 'Admin\ContentController@store')->name('content.store');
+            Route::get('content-show/{content}/{name?}', 'Admin\ContentController@show')->name('content.show');
+            Route::put('content-update/{content}/{language?}', 'Admin\ContentController@update')->name('content.update');
+            Route::delete('contents/{id}', 'Admin\ContentController@contentDelete')->name('content.delete');
+
+
+            // Blog Management
+            Route::get('/blog/category', 'Admin\BlogController@category')->name('blog.category');
+            Route::get('/blog/categoryadd', 'Admin\BlogController@categoryadd')->name('blog.categoryadd');
+            Route::get('blog/categoryedit/{id}', 'Admin\BlogController@editcategory')->name('blog.categoryedit');
+            Route::delete('/blog/categorydel/{id}', 'Admin\BlogController@destroyCategory')->name('blog.categorydel');
+            Route::get('/blog/category/data', 'Admin\BlogController@destroycategory')->name('list.blog.category');
+            Route::post('/blog/category/store', 'Admin\BlogController@storeCategory')->name('store.blog.category');
+            Route::put('/blog/category/update/{id}', 'Admin\BlogController@updateCategory')->name('update.blog.category');
+
+
+
+            // Manual Methods
+            Route::get('blog', 'Admin\BlogController@index')->name('blog.index');
+            Route::get('blog/new', 'Admin\BlogController@create')->name('blog.create');
+            Route::post('blog/new', 'Admin\BlogController@store')->name('blog.store');
+            Route::get('blog/edit/{id}', 'Admin\BlogController@edit')->name('blog.edit');
+            Route::put('blog/update/{id}', 'Admin\BlogController@update')->name('blog.update');
+            Route::delete('blog/delete/{id}', 'Admin\BlogController@delete')->name('blog.delete');
+        });
+        
     });
 });
 
@@ -485,7 +499,7 @@ Route::get('/stripeajax', 'PaymentController@stripeajax')->name('stripeajax');
 
     Route::get('/language/{code?}', 'FrontendController@language')->name('language');
 
-    Route::get('/', 'FrontendController@index')->name('home');
+    Route::get('/', 'FrontendController@index')->name('home'); // this is starting point
     Route::get('/how-it-work', 'FrontendController@howItWork')->name('how-it-work');
     Route::get('/help', 'FrontendController@help')->name('help');
     Route::get('/about', 'FrontendController@about')->name('about');
