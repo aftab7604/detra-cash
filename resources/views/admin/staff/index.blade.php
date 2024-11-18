@@ -2,22 +2,23 @@
 @section('title',trans($title))
 @section('content')
 
-
-
     <div class="card card-primary m-0 m-md-4 my-4 m-md-0 shadow">
         <div class="card-body">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
+                @if(adminAccessRoute(config('role.manage_staff.access.view')))
                 <li class="nav-item" role="presentation">
                     <a class="nav-link"
                         data-toggle="tab" data-target="#home" type="button" role="tab"
                         aria-controls="home" aria-selected="true">@lang('Users')</a>
                 </li>
-
+                @endif
+                    @if(adminAccessRoute(config('role.manage_role.access.view')))
                 <li class="nav-item" role="presentation">
                     <a class="nav-link"
                         data-toggle="tab" data-target="#role" type="button" role="tab"
                         aria-controls="role" aria-selected="false">@lang('Roles')</a>
                 </li>
+                    @endif
             </ul>
 
             <div class="tab-content " id="myTabContent">
@@ -321,9 +322,9 @@
                                                                                         />
                                                                                         @endif
                                                                                     </td>
-                                                                                </tr>    
+                                                                                </tr>
                                                                                 @endforeach
-                                                                                
+
                                                                                 @endforeach
                                                                                 </tbody>
                                                                             </table>
@@ -534,7 +535,7 @@
                                                     <td colspan="5">{{$v['label']}}</td>
                                                 </tr>
                                                 @foreach ($v['items'] as $key=>$value)
-                                                
+
                                                 <tr>
                                                     <td data-label="Permissions" class="text-left">{{$value['label']}}</td>
                                                     <td data-label="View">
@@ -622,16 +623,16 @@ $(document).ready(function () {
         var selectedCountryData = itiInstances[uId].getSelectedCountryData();
         $('#phone-'+uId).val(selectedCountryData.dialCode);
         console.log('Country dropdown changed:', selectedCountryData.name, selectedCountryData.dialCode);
-        
+
     })
 
-   
+
     // Initialize intlTelInput for each phone input
     phoneInputs.forEach(function(input) {
         var uId = input.getAttribute('data-id')
 
         var iso_code = document.getElementById("country_code-"+uId).value ? document.getElementById("country_code-"+uId).value : 'de';
-   
+
         var iti = window.intlTelInput(input, {
             separateDialCode: true,
             initialCountry: iso_code,  // Set the default country to "de"
@@ -643,7 +644,7 @@ $(document).ready(function () {
         itiInstances[uId] = iti;
 
         console.log(itiInstances);
-        
+
 
         // Attach country change event to each input
         input.addEventListener('countrychange', function(e) {
@@ -655,7 +656,7 @@ $(document).ready(function () {
         });
     });
 
-    
+
     // Custom function to handle country change
     function handleCountryChange(countryData, inputElement) {
         var InputUId = inputElement.getAttribute('data-id')
@@ -666,8 +667,8 @@ $(document).ready(function () {
         $('#country_code-'+InputUId).val(countryData.iso2);
     }
 
-    
-    
+
+
 });
 
 

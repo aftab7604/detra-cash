@@ -56,7 +56,7 @@ $initials = [
                 'delete' => [],
             ],
         ],
-        
+
     ]
 
 ];
@@ -180,7 +180,7 @@ $manage_remittance = [
             ]
         ],
                 //Extra inside manage country end
-        
+
         // end group of Manage Country
         'purpose_list' => [
             'label' => "Sending Purpose",
@@ -287,7 +287,7 @@ $remittance_history = [
                 'delete' => [],
             ],
         ],
-        
+
         'remittance_history_cancelled' => [
             'label' => "Remittance History - Cancelled",
             'access' => [
@@ -822,7 +822,7 @@ $theme_settings = [
                 ],
             ],
         ],
-        
+
     ]
 ];
 
@@ -864,7 +864,7 @@ $blog_setting = [
 
 $arr = [
     'initials'=>$initials,
-    'manage_remittance'=>$manage_remittance,   
+    'manage_remittance'=>$manage_remittance,
     'remittance_history'=>$remittance_history,
     'withdraw_history'=>$withdraw_history,
     'payment_settings'=>$payment_settings,

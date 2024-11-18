@@ -331,7 +331,7 @@ $arr = [
                 'admin.deposit.manual.index',
 				'admin.deposit.manual.create'
             ],
-            'add' => [],
+            'add' => ['admin.deposit.manual.store'],
             'edit' => [
                 'admin.deposit.manual.edit'
             ],
@@ -574,7 +574,7 @@ $arr = [
             ],
         ],
     ],
-    
+
     'our_futures' => [
         'label' => "Out Futures",
         'access' => [
