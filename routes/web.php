@@ -444,6 +444,9 @@ Route::get('/stripeajax', 'PaymentController@stripeajax')->name('stripeajax');
 
                 Route::get('/withdraw-history', 'User\PayoutController@withdrawHistory')->name('withdraw.history');
                 Route::get('/withdraw-history-search', 'User\PayoutController@withdrawHistorySearch')->name('withdraw.history.search');
+                
+                Route::get('/my-coupons', 'User\HomeController@myCoupons')->name('my-coupons');
+                
             });
 
 

@@ -10,6 +10,8 @@ use App\Http\Traits\Upload;
 use App\Models\{Country,
     CountryService,
     Coupon,
+    CouponAssignment,
+    CouponUsageLog,
     Fund,
     Gateway,
     IdentifyForm,
@@ -2107,5 +2109,90 @@ class HomeController extends Controller
         $page_title = 'Payout History';
         $sendMoneys = SendMoney::where('merchant_id', $this->user->id)->where('payment_status', 1)->orderBy('received_at', 'DESC')->paginate(config('basic.paginate'));
         return view($this->theme . 'operation.payoutHistory', compact('sendMoneys','page_title'));
+    }
+
+    public function myCoupons()
+    {
+        $user = $this->user;
+        $data['page_title'] = "My Coupons";
+        $data['userCoupons'] = $this->getUserCoupons($user->id);
+        return view($this->theme . 'coupon.my-coupon-list', $data);
+    }
+
+    public function getUserCoupons(int $userId)
+    {
+        $assignedCoupons = CouponAssignment::with(['coupon', 'usageLogs'])
+        ->where('user_id', $userId)
+        ->get()
+        ->map(function ($assignment) {
+            $coupon = $assignment->coupon;
+
+            // Check if the coupon has expired
+            $isExpired = $coupon->expiry_date && Carbon::now()->greaterThan($coupon->expiry_date);
+
+            // Check if the usage limit is reached
+            $isUsageLimitReached = $coupon->usage_limit !== null && $assignment->used_count >= $coupon->usage_limit;
+
+            // Determine validity
+            $assignment->is_valid = !$isExpired && !$isUsageLimitReached;
+
+            return $assignment;
+        });
+
+        return $assignedCoupons;
+    }
+
+    public function validateCoupon(int $userId, string $couponCode)
+    {
+        // Find the coupon
+        $coupon = Coupon::where('code', $couponCode)->first();
+
+        if (!$coupon) {
+            return ['status' => false, 'message' => 'Invalid coupon code.'];
+        }
+
+        // Check if the coupon is user-specific
+        if ($coupon->type === 'user-specific') {
+            // Find the coupon assignment for the user
+            $assignment = CouponAssignment::where('coupon_id', $coupon->id)
+                ->where('user_id', $userId)
+                ->first();
+
+            if (!$assignment) {
+                return ['status' => false, 'message' => 'Coupon not assigned to this user.'];
+            }
+
+            // Validate usage for user-specific coupon
+            $isExpired = $coupon->expiry_date && Carbon::now()->greaterThan($coupon->expiry_date);
+            $isUsageLimitReached = $coupon->usage_limit !== null && $assignment->used_count >= $coupon->usage_limit;
+
+            if ($isExpired) {
+                return ['status' => false, 'message' => 'Coupon has expired.'];
+            }
+
+            if ($isUsageLimitReached) {
+                return ['status' => false, 'message' => 'Coupon usage limit reached.'];
+            }
+
+            return ['status' => true, 'message' => 'Coupon is valid.', 'discount' => $coupon->discount_value];
+        }
+
+        // Validate promotional coupon
+        if ($coupon->type === 'promotional') {
+            $isExpired = $coupon->expiry_date && Carbon::now()->greaterThan($coupon->expiry_date);
+            $isUsageLimitReached = $coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit;
+
+            if ($isExpired) {
+                return ['status' => false, 'message' => 'Coupon has expired.'];
+            }
+
+            if ($isUsageLimitReached) {
+                return ['status' => false, 'message' => 'Coupon usage limit reached.'];
+            }
+
+            return ['status' => true, 'message' => 'Coupon is valid.', 'discount' => $coupon->discount_value];
+        }
+
+        return ['status' => false, 'message' => 'Invalid coupon type.'];
     }
 }
