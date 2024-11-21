@@ -105,13 +105,14 @@ $manage_remittance = [
             'label' => "Continents",
             'access' => [
                 'view' => [
-                    'admin.continent'
+                    'admin.continent',
+                    'admin.list.continent'
                 ],
                 'add' => [
                     'admin.store.continent'
                 ],
                 'edit' => [
-                    'admin.update.continent'
+                    'admin.update.continent',
                 ],
                 'delete' => [
                     'admin.delete.continent'
@@ -156,6 +157,7 @@ $manage_remittance = [
             'access' => [
                 'view' => [
                     'admin.country.service',
+                    'admin.country.service.operatorImport'
                 ],
                 'add' => [
                     'admin.country.service.store'
@@ -260,8 +262,12 @@ $remittance_history = [
                 'view' => [
                     'admin.money-transfer.recharge.pending',
                 ],
-                'add' => [],
-                'edit' => [],
+                'add' => [
+                    'admin.money-transfer.rechargeRequest'
+                ],
+                'edit' => [
+                    'admin.money-transfer.action'
+                ],
                 'delete' => [],
             ],
         ],
@@ -270,6 +276,9 @@ $remittance_history = [
             'access' => [
                 'view' => [
                     'admin.money-transfer.pending',
+//                    'admin.money-transfer.flutterAction',
+//                    'admin.money-transfer.flutterVerifyAcc',
+//                    'admin.money-transfer.flutterVerifyTrx',
                 ],
                 'add' => [],
                 'edit' => [],
@@ -306,11 +315,12 @@ $remittance_history = [
                     'admin.money-transfer',
                     'admin.money-transfer.search',
                     'admin.money-transfer.details',
+//                    'admin.money-transfer.flutterAction',
+//                    'admin.money-transfer.flutterVerifyAcc',
+//                    'admin.money-transfer.flutterVerifyTrx',
                 ],
                 'add' => [],
-                'edit' => [
-                    'admin.money-transfer.action'
-                ],
+                'edit' => [],
                 'delete' => [],
             ],
         ],
@@ -328,7 +338,9 @@ $withdraw_history =  [
                     'admin.withdraw-history',
                 ],
                 'add' => [],
-                'edit' => [],
+                'edit' => [
+                    'admin.payout-view'
+                ],
                 'delete' => [],
             ],
         ],
@@ -354,11 +366,16 @@ $payment_settings = [
             'access' => [
                 'view' => [
                     'admin.payment.methods',
+                    'admin.payment.methods.withdrawinfo',
+                    'admin.payment.methods.withdrawinfocreate',
+                    'admin.payment.methods.currency',
+                    'admin.payment.methods.currencycreate'
                 ],
                 'add' => [],
                 'edit' => [
                     'admin.edit.payment.methods',
-                    'admin.update.payment.methods'
+                    'admin.update.payment.methods',
+                    'admin.payment.methods.deactivate'
                 ],
                 'delete' => [],
             ],
@@ -368,11 +385,13 @@ $payment_settings = [
             'access' => [
                 'view' => [
                     'admin.deposit.manual.index',
-                    'admin.deposit.manual.create'
+                    'admin.deposit.manual.create',
+                    'admin.deposit.manual.store'
                 ],
                 'add' => [],
                 'edit' => [
-                    'admin.deposit.manual.edit'
+                    'admin.deposit.manual.edit',
+                    'admin.deposit.manual.update',
                 ],
                 'delete' => [],
             ],
@@ -399,7 +418,7 @@ $payment_settings = [
                 ],
                 'add' => [],
                 'edit' => [
-                    'admin.payment.action'
+//                    'admin.payment.action'
                 ],
                 'delete' => [],
             ],
@@ -412,7 +431,7 @@ $payment_settings = [
                 ],
                 'add' => [],
                 'edit' => [
-                    'admin.payment.action'
+//                    'admin.payment.action'
                 ],
                 'delete' => [],
             ],
@@ -442,16 +461,26 @@ $manage_user = [
                 'view' => [
                     'admin.users',
                     'admin.users.search',
-                    'admin.user.transaction',
-                    'admin.user.fundLog',
-                    'admin.user.transfer',
-                    'admin.user.loggedIn',
+//                    'admin.user.transaction',
+//                    'admin.user.fundLog',
+//                    'admin.user.transfer',
+//                    'admin.user.loggedIn',
                 ],
                 'add' => [],
                 'edit' => [
                     'admin.user-multiple-active',
                     'admin.user-multiple-inactive',
                     'admin.user-edit',
+                    'admin.user-update',
+                    'admin.userPasswordUpdate',
+                    'admin.user-balance-update',
+                    'admin.user-loginAccount',
+                    'admin.user.transaction',
+                    'admin.user.fundLog',
+                    'admin.user.transfer',
+                    'admin.user.email-send',
+                    'admin.user.loggedIn',
+                    'admin.user.userKycHistory'
                 ],
                 'delete' => [],
             ],
@@ -486,7 +515,9 @@ $manage_user = [
                     'admin.users.kyc.pending',
                 ],
                 'add' => [],
-                'edit' => [],
+                'edit' => [
+                    'admin.users.Kyc.action'
+                ],
                 'delete' => []
             ]
         ],
@@ -649,12 +680,18 @@ $controls = [
             'label' => "Out Futures",
             'access' => [
                 'view' => [
-                    'admin.ourFuture.index'
+                    'admin.ourFuture.index',
                 ],
-                'add' => [],
-                'edit' => [],
+                'add' => [
+                    'admin.ourFuture.store'
+                ],
+                'edit' => [
+                    'admin.ourFuture.edit',
+                    'admin.ourFuture.update'
+                ],
                 'delete' => [
-                    'admin.ourFuture.remove'
+                    'admin.ourFuture.remove',
+                    'admin.ourFuture.delete'
                 ],
             ],
         ],
@@ -705,6 +742,7 @@ $controls = [
             'access' => [
                 'view' => [
                     'admin.email-template.show',
+                    'admin.email-template.update',
                 ],
                 'add' => [],
                 'edit' => [
@@ -724,7 +762,7 @@ $controls = [
                 ],
                 'add' => [],
                 'edit' => [
-                    'admin.sms.config',
+//                    'admin.sms.config',
                 ],
                 'delete' => [],
             ],
@@ -735,6 +773,7 @@ $controls = [
             'access' => [
                 'view' => [
                     'admin.sms-template',
+                    'admin.sms-template.update',
                 ],
                 'add' => [],
                 'edit' => [
@@ -765,10 +804,10 @@ $controls = [
             'access' => [
                 'view' => [
                     'admin.notify-template.show',
-                    'admin.notify-template.edit',
                 ],
                 'add' => [],
                 'edit' => [
+                    'admin.template.update',
                     'admin.notify-template.update',
                 ],
                 'delete' => [],
@@ -783,9 +822,11 @@ $controls = [
                 ],
                 'add' => [
                     'admin.language.create',
+                    'admin.language.store',
                 ],
                 'edit' => [
                     'admin.language.edit',
+                    'admin.language.update',
                     'admin.language.keywordEdit',
                 ],
                 'delete' => [
@@ -807,9 +848,11 @@ $theme_settings = [
                     'admin.breadcrumb',
                     'admin.template.show',
                     'admin.content.index',
+                    'admin.content.update',
+                    'admin.content.store'
                 ],
                 'add' => [
-                    'admin.content.create'
+                    'admin.content.create',
                 ],
                 'edit' => [
                     'admin.logoUpdate',
@@ -833,12 +876,15 @@ $blog_setting = [
             'label' => "Blog Category",
             'access' => [
                 'view' => [
-                    'admin.blog.category'
+                    'admin.blog.category',
                 ],
-                'add' => ['admin.blog.category'],
+                'add' => [
+                    'admin.blog.categoryadd',
+                    'admin.store.blog.category'
+                ],
                 'edit' => [
-                    'admin.blog.category',
-                    'admin.blog.category',
+                    'admin.blog.categoryedit',
+                    'admin.update.blog.category',
                 ],
                 'delete' => ['admin.blog.category.delete'],
             ],
@@ -847,12 +893,16 @@ $blog_setting = [
             'label' => "Blog",
             'access' => [
                 'view' => [
-                    'admin.blog',
-                    'admin.blog.search'
+                    'admin.blog.index',
+                    'admin.blog.search',
                 ],
-                'add' => ['admin.blog.create'],
+                'add' => [
+                    'admin.blog.create',
+                    'admin.blog.store'
+                ],
                 'edit' => [
                     'admin.blog.edit',
+                    'admin.blog.update',
                     'admin.blog.show',
                 ],
                 'delete' => ['admin.blog.delete'],

@@ -22,7 +22,7 @@ class UtilitesController extends Controller
     {
         $data['page_title'] = 'Service List';
         $data['items'] = Service::where('language_id',1)->orderBy('name')->get();
-        
+
         return view('admin.country.serviceList', $data);
     }
 
@@ -39,7 +39,7 @@ class UtilitesController extends Controller
             'status' => 'required'
         ];
 		$this->validate($request, $rules);
-		
+
 		$data = new Service();
 		$data->name 		= $request->name;
 		$data->status 		= $request->status;
@@ -50,7 +50,7 @@ class UtilitesController extends Controller
         if (!$res) {throw new \Exception('Unexpected error! Please try again.');}
 	    return back()->with('success', 'Data has been Added.');
     }
-    
+
     public function editService($id,request $request)
     {
         $data['page_title'] = 'Edit Service';
@@ -59,7 +59,7 @@ class UtilitesController extends Controller
         $data['languages'] = $languages;
         return view('admin.country.editserviceList', $data);
     }
-    
+
     public function updateService(Request $request,$id)
     {
         $rules = [
@@ -68,17 +68,17 @@ class UtilitesController extends Controller
 		$this->validate($request, $rules);
         try {
 	            $child_category = Service::where(['parent_id' => $id,'language_id' => $request->language_id])->first();
-	        
+
 	            if($child_category)
 		        {
 		        	$data = Service::findOrFail($request->request_id);
-		        
+
 	        		$data->name = $request->name;
 		            $res = $data->save();
                     log_admin_activity('New service', 'Added a new service ('.$request->name.')');
 		        }else
 		        {
-		        	
+
 		        	if($request->language_id == 1)
 		        	{
 		        		$data = Service::findOrFail($id);
@@ -95,20 +95,20 @@ class UtilitesController extends Controller
                         log_admin_activity('New service', 'Added a new service ('.$request->name.')');
 		        	}
 		        }
-	        
+
 	        if (!$res) {
 	                throw new \Exception('Unexpected error! Please try again.');
 	            }
 	        return back()->with('success', 'Data has been updated.');
 		}catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
-        }    
-    }  
+        }
+    }
 
     public function destroyService($id)
     {
         $data = Service::findOrFail($id);
-        
+
         $result = Service::destroy($id);
 	   	if (!$result) {
 	                throw new \Exception('Unexpected error! Please try again.');
@@ -122,6 +122,8 @@ class UtilitesController extends Controller
 
     public function continent()
     {
+        $items = Continent::orderBy('name')->get();
+//        dd($items);
         $data['page_title'] = 'Continent List';
         return view('admin.country.continent', $data);
     }
@@ -206,7 +208,7 @@ class UtilitesController extends Controller
         }
         $result = Continent::destroy($excp['id']);
         if ($result) {
-            log_admin_activity('Delete continent list', 'Deleted continent list ('.$excp['name'].')');
+//            log_admin_activity('Delete continent list', 'Deleted continent list ('.$excp['name'].')');
             return [
                 'status' => 'success',
                 'message' => 'Delete Successfully',
@@ -226,7 +228,7 @@ class UtilitesController extends Controller
     {
         $data['page_title'] = 'Purpose List';
         $data['items'] = SendingPurpose::where('language_id',1)->orderBy('id', 'desc')->get();
-        
+
         return view('admin.utility.purpose', $data);
     }
 
@@ -235,33 +237,33 @@ class UtilitesController extends Controller
         $items = SendingPurpose::where('language_id',1)->orderBy('id', 'desc')->get();
         return $items;
     }
-    
+
     public function editPurpose($id,request $request)
     {
-    	
-    	
+
+
     		$data['page_title'] = 'Edit Purpose';
 	    	$data['method'] = SendingPurpose::findOrFail($id);
 	    	$languages = Language::all();
 	        $data['languages'] = $languages;
-	        
+
 	        return view('admin.utility.editpurpose', $data);
-    	
-    	
+
+
     }
-    
+
     public function addPurpose()
     {
-    	
-    	
+
+
     		$data['page_title'] = 'Add Purpose';
-	    	
-	        
+
+
 	        return view('admin.utility.addpurpose',$data);
-    	
-    	
+
+
     }
-    
+
 
     public function storePurpose(Request $request)
     {
@@ -269,7 +271,7 @@ class UtilitesController extends Controller
             'title' => 'required',
         ];
 		$this->validate($request, $rules);
-		
+
 		$data = new SendingPurpose();
 		$data->title 		= $request->title;
         $data->language_id	= 1;
@@ -280,35 +282,35 @@ class UtilitesController extends Controller
 	            }
         log_admin_activity('New Purpose', 'Added a new purpose ('.$request->title.')');
 	    return back()->with('success', 'Data has been Added.');
-       
+
     }
 
     public function updatepurpose(Request $request,$id)
     {
-    	
+
         $rules = [
             'title' => 'required',
         ];
 		$this->validate($request, $rules);
-		
+
         try {
 	        $child_category = SendingPurpose::where(['parent_id' => $id,'language_id' => $request->language_id])->first();
-	        
+
 	        if($child_category)
 		        {
 		        	$data = SendingPurpose::findOrFail($request->request_id);
-		        
+
 	        		$data->title = $request->title;
 		            $res = $data->save();
 		        }else
 		        {
-		        	
+
 		        	if($request->language_id == 1)
 		        	{
-		        		
-		        		
+
+
 		        		$data = SendingPurpose::findOrFail($id);
-		        		
+
 		        		$data->title = $request->title;
 			            $res = $data->update();
 		        	}else
@@ -319,9 +321,9 @@ class UtilitesController extends Controller
 			            $data->parent_id	= $request->id;
 			            $res = $data->save();
 		        	}
-		        	
+
 		        }
-	        
+
 	       // $result = SendingPurpose::findOrFail($request['id'])->update($in);
 	        if (!$res) {
 	                throw new \Exception('Unexpected error! Please try again.');
@@ -330,7 +332,7 @@ class UtilitesController extends Controller
 	        return back()->with('success', 'Data has been updated.');
 		}catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
-        }    
+        }
     }
 
     public function destroyPurpose(Request $request,$id)
@@ -342,7 +344,7 @@ class UtilitesController extends Controller
 	        }
         log_admin_activity('Delete Purpose', 'Deleted purpose ('.$data->title.')');
 	    return back()->with('success', 'Data has been Deleted.');
-        
+
     }
 
 
@@ -352,7 +354,7 @@ class UtilitesController extends Controller
         $data['items'] = SourceFund::where('language_id',1)->orderBy('id', 'desc')->get();
         return view('admin.utility.sourceOfFund', $data);
     }
-    
+
     public function editSF($id)
     {
         $data['page_title'] = 'Edit Source Of Fund';
@@ -361,8 +363,8 @@ class UtilitesController extends Controller
         $data['languages'] = $languages;
         return view('admin.utility.editsourceOfFund', $data);
     }
-    
-    
+
+
     public function addSF()
     {
         $data['page_title'] = 'Add Source Of Fund';
@@ -381,7 +383,7 @@ class UtilitesController extends Controller
             'title' => 'required',
         ];
 		$this->validate($request, $rules);
-		
+
 		$data = new SourceFund();
 		$data->title 		= $request->title;
         $data->language_id	= 1;
@@ -392,35 +394,35 @@ class UtilitesController extends Controller
 	    }
         log_admin_activity('New Source Of Fund', 'Added source of fund ('.$request->title.')');
 	    return back()->with('success', 'Data has been Added.');
-        
+
     }
-    
+
     public function updateSF(Request $request,$id)
     {
-    	
+
         $rules = [
             'title' => 'required',
         ];
 		$this->validate($request, $rules);
-		
+
         try {
 	        $child_category = SourceFund::where(['parent_id' => $id,'language_id' => $request->language_id])->first();
-	        
+
 	        if($child_category)
 		        {
 		        	$data = SourceFund::findOrFail($request->request_id);
-		        
+
 	        		$data->title = $request->title;
 		            $res = $data->save();
 		        }else
 		        {
-		        	
+
 		        	if($request->language_id == 1)
 		        	{
-		        		
-		        		
+
+
 		        		$data = SourceFund::findOrFail($id);
-		        		
+
 		        		$data->title = $request->title;
 			            $res = $data->update();
 		        	}else
@@ -431,9 +433,9 @@ class UtilitesController extends Controller
 			            $data->parent_id	= $request->id;
 			            $res = $data->save();
 		        	}
-		        	
+
 		        }
-	        
+
 	       // $result = SendingPurpose::findOrFail($request['id'])->update($in);
 	        if (!$res) {
 	                throw new \Exception('Unexpected error! Please try again.');
@@ -442,10 +444,10 @@ class UtilitesController extends Controller
 	        return back()->with('success', 'Data has been updated.');
 		}catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
-        }    
+        }
     }
 
-   
+
 
     public function destroySF(Request $request,$id)
     {

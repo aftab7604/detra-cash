@@ -18,7 +18,7 @@
                         <th scope="col">@lang('Name')</th>
                         <th scope="col">@lang('Verification Type')</th>
                         <th scope="col">@lang('Status')</th>
-                        @if(adminAccessRoute(config('role.user_management.access.edit')))
+                        @if(adminAccessRoute(config('role.kyc_pending.access.edit')))
                         <th scope="col">@lang('Action')</th>
                         @endif
                     </tr>
@@ -45,7 +45,7 @@
                                 @endif
 
                             </td>
-                            @if(adminAccessRoute(config('role.user_management.access.edit')))
+                            @if(adminAccessRoute(config('role.kyc_pending.access.edit')))
                             <td data-label="@lang('Action')">
                                 @php
                                     if($item->details){

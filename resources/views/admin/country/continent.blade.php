@@ -36,7 +36,6 @@
                                 <span v-else class="badge badge-danger badge-pill">{{trans('Deactive')}}</span>
                             </td>
 
-
                             @if(adminAccessRoute(config('role.continent_list.access.edit')) || adminAccessRoute(config('role.continent_list.access.delete')))
                             <td data-label="@lang('Action')">
                                 @if(adminAccessRoute(config('role.continent_list.access.edit')))
@@ -58,7 +57,7 @@
                             </td>
                             @endif
 
-                            
+
                         </tr>
                         </tbody>
                     </table>
@@ -230,6 +229,7 @@
                     axios.get("{{route('admin.list.continent')}}")
                         .then(response => {
                             this.items = response.data;
+                            console.log(response.data);
                         });
                 },
                 createItem() {

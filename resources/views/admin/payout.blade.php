@@ -92,11 +92,11 @@
                                 </td>
                                 <td data-label="@lang('Action')">
 
+                                    @if(adminAccessRoute(config('role.payout_history.access.edit')))
                                     <a href="{{route('admin.money-transfer.details',$data)}}"  class="btn btn-primary ml-1 mb-1"
                                        title="{{trans('Details')}}"><i class="fa fa-info-circle"> </i>
                                     </a>
-
-
+                                    @endif
                                 </td>
                             </tr>
                         @empty

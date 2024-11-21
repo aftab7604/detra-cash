@@ -11,8 +11,9 @@
             <div class="col-12">
                 <div class="card card-primary shadow">
                     <div class="card-body">
+                        @if(adminAccessRoute(config('role.blog.access.add')))
                         <a href="{{route('admin.blog.create')}}" class="btn btn-success btn-sm float-right mb-3"><i class="fa fa-plus-circle"></i> {{trans('Add New')}}</a>
-
+                        @endif
 
                         <table class="table ">
                             <thead class="thead-dark">
@@ -37,18 +38,21 @@
                                         </td>
 
                                         <td data-label="@lang('Action')">
+                                            @if(adminAccessRoute(config('role.blog.access.edit')))
                                             <a href="{{ route('admin.blog.edit', $method->id) }}"
                                                class="btn btn-primary btn-circle"
                                                data-toggle="tooltip"
                                                data-placement="top"
                                                data-original-title="@lang('Edit')">
                                                 <i class="fa fa-edit"></i></a>
-
-                                                <button type="button"
+                                            @endif
+                                                @if(adminAccessRoute(config('role.blog.access.delete')))
+                                             <button type="button"
                                                         class="btn btn-sm btn-danger  btn-circle disableBtn"
                                                         data-route="{{ route('admin.blog.delete', $method->id) }}"
                                                         data-toggle="modal" data-target="#disableModal" ><i class="fa fa-trash-alt"></i>
                                                 </button>
+                                                @endif
                                         </td>
 
                                     </tr>

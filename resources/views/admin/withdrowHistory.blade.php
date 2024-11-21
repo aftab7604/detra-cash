@@ -156,7 +156,7 @@
                                                                 @if($value->type == 'file')
                                                                 <img class="img-profile"
                                                                 src="{{ asset('storage/'.$value->name) }}" width="200" height="100">
-                                                                    
+
                                                                 @else
                                                                     @if($value->name == 'amount')
                                                                         <span class="font-weight-bold text-dark">

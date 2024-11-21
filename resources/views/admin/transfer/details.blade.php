@@ -142,7 +142,7 @@
 
                             <h4 class="card-title">{{trans('Transaction Information')}}
                             </h4>
-                            @if(adminAccessRoute(config('role.remittance_history.access.edit')))
+                            @if(adminAccessRoute(config('role.remittance_history_pending_recharge.access.edit')))
                                 <div class="">
                                     @if(isset($exactServices))
                                         @foreach($exactServices as $key => $serves)
