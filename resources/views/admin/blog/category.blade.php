@@ -9,12 +9,13 @@
 
         <div class="card card-primary m-0 m-md-4 my-4 m-md-0 shadow">
             <div class="card-body">
+                @if(adminAccessRoute(config('role.blogcategory.access.categoryadd')))
                <a href="{{route('admin.blog.categoryadd')}}" class="btn btn-success btn-sm float-right mb-3"><i class="fa fa-plus-circle"></i> {{trans('Add New')}}</a>
-                
+                @endif
 
 
                 <div class="table-responsive">
-                	
+
                         <table class="table ">
                             <thead class="thead-dark">
                             <tr>
@@ -30,21 +31,24 @@
                                     <tr >
                                         <td data-label="@lang('SL')">{{ loopIndex($methods) + $key }} </td>
                                         <td data-label="@lang('Name')">{{ $method->title }} </td>
-                                        
+
 
                                         <td data-label="@lang('Action')">
+                                            @if(adminAccessRoute(config('role.blogcategory.access.edit')))
                                             <a href="{{ route('admin.blog.categoryedit', $method->id) }}"
                                                class="btn btn-primary btn-circle"
                                                data-toggle="tooltip"
                                                data-placement="top"
                                                data-original-title="@lang('Edit')">
                                                 <i class="fa fa-edit"></i></a>
-
+                                            @endif
+                                                @if(adminAccessRoute(config('role.blogcategory.access.delete')))
                                                 <button type="button"
                                                         class="btn btn-sm btn-danger  btn-circle disableBtn"
                                                         data-route="{{ route('admin.blog.categorydel', $method->id) }}"
                                                         data-toggle="modal" data-target="#disableModal" ><i class="fa fa-trash-alt"></i>
                                                 </button>
+                                                @endif
                                         </td>
 
                                     </tr>
@@ -60,7 +64,7 @@
                         </table>
 
                         {{ $methods->appends($_GET)->links('partials.pagination') }}
-                    
+
 
 
                 </div>

@@ -95,7 +95,8 @@ $arr = [
         'label' => "Continent List",
         'access' => [
             'view' => [
-                'admin.continent'
+                'admin.continent',
+                'admin.list.continent'
             ],
             'add' => [
                 'admin.store.continent'
@@ -145,6 +146,7 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.country.service',
+                'admin.country.service.operatorImport',
             ],
             'add' => [
                 'admin.country.service.store'
@@ -236,11 +238,12 @@ $arr = [
                 'admin.money-transfer',
                 'admin.money-transfer.search',
                 'admin.money-transfer.details',
+//                'admin.money-transfer.flutterAction',
+//                'admin.money-transfer.flutterVerifyAcc',
+//                'admin.money-transfer.flutterVerifyTrx',
             ],
             'add' => [],
-            'edit' => [
-                'admin.money-transfer.action'
-            ],
+            'edit' => [],
             'delete' => [],
         ],
     ],
@@ -260,6 +263,9 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.money-transfer.pending',
+//                'admin.money-transfer.flutterAction',
+//                'admin.money-transfer.flutterVerifyAcc',
+//                'admin.money-transfer.flutterVerifyTrx',
             ],
             'add' => [],
             'edit' => [],
@@ -283,8 +289,12 @@ $arr = [
             'view' => [
                 'admin.money-transfer.recharge.pending',
             ],
-            'add' => [],
-            'edit' => [],
+            'add' => [
+                'admin.money-transfer.rechargeRequest'
+            ],
+            'edit' => [
+                'admin.money-transfer.action'
+            ],
             'delete' => [],
         ],
     ],
@@ -295,7 +305,9 @@ $arr = [
                 'admin.withdraw-history',
             ],
             'add' => [],
-            'edit' => [],
+            'edit' => [
+                'admin.payout-view'
+            ],
             'delete' => [],
         ],
     ],
@@ -315,11 +327,16 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.payment.methods',
+                'admin.payment.methods.withdrawinfo',
+                'admin.payment.methods.withdrawinfocreate',
+                'admin.payment.methods.currency',
+                'admin.payment.methods.currencycreate'
             ],
             'add' => [],
             'edit' => [
                 'admin.edit.payment.methods',
-                'admin.update.payment.methods'
+                'admin.update.payment.methods',
+                'admin.payment.methods.deactivate'
             ],
             'delete' => [],
         ],
@@ -329,11 +346,13 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.deposit.manual.index',
-				'admin.deposit.manual.create'
+				'admin.deposit.manual.create',
+                'admin.deposit.manual.store'
             ],
-            'add' => ['admin.deposit.manual.store'],
+            'add' => [],
             'edit' => [
-                'admin.deposit.manual.edit'
+                'admin.deposit.manual.edit',
+                'admin.deposit.manual.update',
             ],
             'delete' => [],
         ],
@@ -359,7 +378,7 @@ $arr = [
             ],
             'add' => [],
             'edit' => [
-                'admin.payment.action'
+//                'admin.payment.action'
             ],
             'delete' => [],
         ],
@@ -372,7 +391,7 @@ $arr = [
             ],
             'add' => [],
             'edit' => [
-                'admin.payment.action'
+//                'admin.payment.action'
             ],
             'delete' => [],
         ],
@@ -395,16 +414,26 @@ $arr = [
             'view' => [
                 'admin.users',
                 'admin.users.search',
-                'admin.user.transaction',
-                'admin.user.fundLog',
-                'admin.user.transfer',
-                'admin.user.loggedIn',
+//                'admin.user.transaction',
+//                'admin.user.fundLog',
+//                'admin.user.transfer',
+//                'admin.user.loggedIn',
             ],
             'add' => [],
             'edit' => [
                 'admin.user-multiple-active',
                 'admin.user-multiple-inactive',
                 'admin.user-edit',
+                'admin.user-update',
+                'admin.userPasswordUpdate',
+                'admin.user-balance-update',
+                'admin.user-loginAccount',
+                'admin.user.transaction',
+                'admin.user.fundLog',
+                'admin.user.transfer',
+                'admin.user.email-send',
+                'admin.user.loggedIn',
+                'admin.user.userKycHistory'
             ],
             'delete' => [],
         ],
@@ -452,7 +481,9 @@ $arr = [
                 'admin.users.kyc.pending',
             ],
             'add' => [],
-            'edit' => [],
+            'edit' => [
+                'admin.users.Kyc.action'
+            ],
             'delete' => []
         ]
     ],
@@ -579,12 +610,18 @@ $arr = [
         'label' => "Out Futures",
         'access' => [
             'view' => [
-                'admin.ourFuture.index'
+                'admin.ourFuture.index',
             ],
-            'add' => [],
-            'edit' => [],
+            'add' => [
+                'admin.ourFuture.store'
+            ],
+            'edit' => [
+                'admin.ourFuture.edit',
+                'admin.ourFuture.update'
+            ],
             'delete' => [
-                'admin.ourFuture.remove'
+                'admin.ourFuture.remove',
+                'admin.ourFuture.delete'
             ],
         ],
     ],
@@ -636,6 +673,7 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.email-template.show',
+                'admin.email-template.update',
             ],
             'add' => [],
             'edit' => [
@@ -653,7 +691,7 @@ $arr = [
             ],
             'add' => [],
             'edit' => [
-                'admin.sms.config',
+//                'admin.sms.config',
             ],
             'delete' => [],
         ],
@@ -664,6 +702,7 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.sms-template',
+                'admin.sms-template.update',
             ],
             'add' => [],
             'edit' => [
@@ -692,10 +731,10 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.notify-template.show',
-                'admin.notify-template.edit',
             ],
             'add' => [],
             'edit' => [
+                'admin.template.update',
                 'admin.notify-template.update',
             ],
             'delete' => [],
@@ -710,9 +749,11 @@ $arr = [
             ],
             'add' => [
                 'admin.language.create',
+                'admin.language.store',
             ],
             'edit' => [
                 'admin.language.edit',
+                'admin.language.update',
                 'admin.language.keywordEdit',
             ],
             'delete' => [
@@ -728,9 +769,11 @@ $arr = [
                 'admin.breadcrumb',
                 'admin.template.show',
                 'admin.content.index',
+                'admin.content.update',
+                'admin.content.store'
             ],
             'add' => [
-                'admin.content.create'
+                'admin.content.create',
             ],
             'edit' => [
                 'admin.logoUpdate',
@@ -747,12 +790,15 @@ $arr = [
         'label' => "Blog Category",
         'access' => [
             'view' => [
-                'admin.blog.category'
-            ],
-            'add' => ['admin.blog.category'],
-            'edit' => [
-            	'admin.blog.category',
                 'admin.blog.category',
+            ],
+            'add' => [
+                'admin.blog.categoryadd',
+                'admin.store.blog.category'
+            ],
+            'edit' => [
+                'admin.blog.categoryedit',
+                'admin.update.blog.category',
             ],
             'delete' => ['admin.blog.category.delete'],
         ],
@@ -761,13 +807,17 @@ $arr = [
         'label' => "Blog",
         'access' => [
             'view' => [
-                'admin.blog',
-                'admin.blog.search'
+                'admin.blog.index',
+                'admin.blog.search',
+                'admin.blog.show',
             ],
-            'add' => ['admin.blog.create'],
+            'add' => [
+                'admin.blog.create',
+                'admin.blog.store'
+            ],
             'edit' => [
             	'admin.blog.edit',
-                'admin.blog.show',
+            	'admin.blog.update',
             ],
             'delete' => ['admin.blog.delete'],
         ],

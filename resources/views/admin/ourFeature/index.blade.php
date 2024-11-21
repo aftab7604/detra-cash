@@ -5,11 +5,12 @@
 
     <div class="card card-primary m-0 m-md-4 my-4 m-md-0 shadow">
         <div class="card-body">
-
+            @if(adminAccessRoute(config('role.our_futures.access.store')))
             <div class="d-flex justify-content-end mb-2 text-right">
                 <button data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-primary btn-sm"><i
                         class="fa fa-plus-circle"></i> {{trans('Add Our Feature')}} </button>
             </div>
+            @endif
 
 
                 <div class="table-responsive">
@@ -35,13 +36,16 @@
                                 <td>{{ $data->description }}</td>
                                 <td>
 
+                                    @if(adminAccessRoute(config('role.our_futures.access.edit')))
                                     <a class="edit_button   btn btn-primary  text-white  btn-sm " href="{{ route('admin.ourFuture.edit',$data->id) }}"> <i class="fa fa-edit"></i></a>
-
+                                    @endif
+                                    @if(adminAccessRoute(config('role.our_futures.access.delete')))
                                     <form action="{{ route('admin.ourFuture.destroy', $data->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button class="edit_button   btn btn-danger  text-white  btn-sm " type="submit"><i class="fa fa-trash"></i></button>
                                     </form>
+                                    @endif
                                 </td>
 
 

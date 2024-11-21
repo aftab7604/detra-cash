@@ -105,12 +105,12 @@
                                     <span class="badge badge-pill badge-danger">@lang('Fail')</span>
                                 @endif
                             </td>
-
+                            @if(adminAccessRoute(config('role.withdraw_history.access.edit')))
                             <td data-label="@lang('More')">
                                 <a href="{{route('admin.payout-view',$item->id)}}"
                                    class="btn btn-primary btn-icon edit_button"><i class="fa fa-eye"></i></a>
                             </td>
-
+                            @endif
                         </tr>
                     @empty
                         <tr>
@@ -179,12 +179,12 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         "use strict";
-    
+
         $('.disableBtn').on('click', function () {
             var route = $(this).data('route');
             $('.deleteAttr').attr('action', route);
         });
-    
+
 
         // Handle the "Edit" button click
         $('.editBtn').on('click', function () {
@@ -204,7 +204,7 @@
         @endif
     });
     </script>
-    
-    
+
+
 
 @endpush
