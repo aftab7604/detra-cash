@@ -158,5 +158,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $data;
     }
 
+    public function referralRewards(){
+        return $this->hasMany(ReferralReward::class ,'refree_code','username');        
+    }
+
 
 }

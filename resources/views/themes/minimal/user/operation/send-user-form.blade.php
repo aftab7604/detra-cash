@@ -5,6 +5,15 @@
 @if(isset($templates['calculation'][0]) && $calculation = $templates['calculation'][0])
     <section id="home-banner">
         <div class="overview mx-lg-5">
+            @if (Session::has("message"))
+            <div class="alert {{Session::get('message')['alert']}} alert-dismissible fade show" role="alert">
+                <strong>{{Session::get("message")['msg']}}</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>    
+            @endif
+            
             <div class="row align-items-center" id="basicCalcInfo">
             <div class="col-xl-4 col-lg-4">
                     <br>
@@ -27,7 +36,7 @@
                                     <div class="choose-currency">
                                         <select id="s-currency" name="sendCountry" class="js-example-templating"
                                                 @change="onChangeSend($event)">
-                                            <option v-for="item in senderCurrencies" :value="item.id"
+                                            <option v-for="item in senderCurrencies" :value="item.id" :selected="item.name === 'GERMANY'"
                                                     :data-image="item.flag" :data-code="item.code">
                                                     @{{ item.name}}
                                             </option>
@@ -65,7 +74,15 @@
                                                 <p><i class="las la-dot-circle"></i> {{ trans('discount') }}</p>
                                             </div>
                                             <div class="right-side">
-                                                <p id="payable">- @{{ parseFloat(((send_amount)*discount)/100).toFixed(2) }}  @{{ sendFrom.code }}</p>
+                                                {{-- <p id="payable">- @{{ parseFloat(((send_amount)*discount)/100).toFixed(2) }}  @{{ sendFrom.code }}</p> --}}
+                                                <p id="payable">
+                                                    - @{{ discountType === 'percentage' 
+                                                        ? parseFloat(((send_amount) * discount) / 100).toFixed(2) 
+                                                        : discountType === 'fixed' 
+                                                            ? parseFloat(discount).toFixed(2) 
+                                                            : '0.00' }} 
+                                                    @{{ sendFrom.code }}
+                                                </p>
                                             </div>
                                         </div>
 
@@ -74,7 +91,19 @@
                                                 <p><i class="las la-dot-circle"></i> {{ trans('Total Payable Amount') }}</p>
                                             </div>
                                             <div class="right-side">    
-                                                <p id="payable">@{{ parseFloat((send_amount)-((send_amount)*discount)/100).toFixed(2) }} @{{ sendFrom.code }}</p>
+                                                {{-- <p id="payable">@{{ parseFloat((send_amount)-((send_amount)*discount)/100).toFixed(2) }} @{{ sendFrom.code }}</p> --}}
+                                                <p id="payable">
+                                                    @{{ 
+                                                        parseFloat(
+                                                            discountType === 'percentage' 
+                                                                ? (send_amount - ((send_amount * discount) / 100)) 
+                                                                : discountType === 'fixed' 
+                                                                    ? (send_amount - discount) 
+                                                                    : send_amount
+                                                        ).toFixed(2) 
+                                                    }} 
+                                                    @{{ sendFrom.code }}
+                                                </p>
                                             </div>
                                         </div>
                                         <input type="text" class="form-control mt-2 mb-2" v-model="cupon" name="cupone" placeholder="{{ trans('Enter Promo Code') }}" autocomplete="off" style="border: 1px solid;">
@@ -101,7 +130,7 @@
                                     <div class="choose-currency">
                                         <select id="g-currency" class="js-example-templating"
                                                 @change="onChangeReceive($event)" name="getCountry">
-                                            <option v-for="item in receiverCurrencies" :value="item.id"
+                                            <option v-for="item in receiverCurrencies" :value="item.id" :selected="item.name === 'NIGERIA'"
                                                     :data-image="item.flag" :data-code="item.code">@{{item.name}}
                                             </option>
                                         </select>
@@ -163,7 +192,8 @@
                 charge:'',
                 cupon:'',
                 cupone:'',
-                discount:0
+                discount:0,
+                discountType:'fixed'
 
             },
             beforeMount() {
@@ -256,12 +286,14 @@
                     })
                     .then(res => {
                         console.log(res)
-                        if(res.data=='Invalid Coupon'){
-                            self.cupone=res.data
+                        if(!res.data.status){
+                            self.cupone=res.data.message
                             self.discount=0
+                            self.discountType = 'fixed'
                         }else{
                             self.cupone=''
-                            self.discount=res.data.reduce_fee
+                            self.discount=res.data.discount
+                            self.discountType = res.data.discount_type
                         }
                     }) 
                 },
@@ -374,23 +406,23 @@
                             this.senderCurrencies = res.data.senderCurrencies
                             this.receiverCurrencies = res.data.receiverCurrencies
 
-                            this.getFacilities(this.receiverCurrencies[0].facilities)
+                            this.getFacilities(this.receiverCurrencies[8].facilities)
 
-                            var per_transfer = this.senderCurrencies[0].per_transfer + ' ' + this.senderCurrencies[0].code;
-                            var daily_limit = this.senderCurrencies[0].daily_limit + ' ' + this.senderCurrencies[0].code;
-                            var monthly_limit = this.senderCurrencies[0].monthly_limit + ' ' + this.senderCurrencies[0].code;
+                            var per_transfer = this.senderCurrencies[3].per_transfer + ' ' + this.senderCurrencies[3].code;
+                            var daily_limit = this.senderCurrencies[3].daily_limit + ' ' + this.senderCurrencies[3].code;
+                            var monthly_limit = this.senderCurrencies[3].monthly_limit + ' ' + this.senderCurrencies[3].code;
 
-                            var receive_per_transfer = this.receiverCurrencies[0].per_transfer + ' ' + this.receiverCurrencies[0].code;
-                            var receive_daily_limit = this.receiverCurrencies[0].daily_limit + ' ' + this.receiverCurrencies[0].code;
-                            var receive_monthly_limit = this.receiverCurrencies[0].monthly_limit + ' ' + this.receiverCurrencies[0].code;
+                            var receive_per_transfer = this.receiverCurrencies[8].per_transfer + ' ' + this.receiverCurrencies[8].code;
+                            var receive_daily_limit = this.receiverCurrencies[8].daily_limit + ' ' + this.receiverCurrencies[8].code;
+                            var receive_monthly_limit = this.receiverCurrencies[8].monthly_limit + ' ' + this.receiverCurrencies[8].code;
 
                             if (0 < this.senderCurrencies.length) {
-                                this.sendFrom = this.senderCurrencies[0];
-                                var minimum_amount = this.senderCurrencies[0].minimum_amount;
+                                this.sendFrom = this.senderCurrencies[3];
+                                var minimum_amount = this.senderCurrencies[3].minimum_amount;
                                 this.send_amount = parseInt(minimum_amount)
                             }
                             if (0 < this.receiverCurrencies.length) {
-                                this.receiveFrom = this.receiverCurrencies[0];
+                                this.receiveFrom = this.receiverCurrencies[8];
                             }
 
                             this.getRate()
