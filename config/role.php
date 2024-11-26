@@ -318,7 +318,9 @@ $arr = [
                 'admin.payout.History',
             ],
             'add' => [],
-            'edit' => [],
+            'edit' => [
+                'admin.money-transfer.details'
+            ],
             'delete' => [],
         ],
     ],
@@ -357,19 +359,19 @@ $arr = [
             'delete' => [],
         ],
     ],
-    'payment_log' => [
-        'label' => "Payment Log",
-        'access' => [
-            'view' => [
-                'admin.payment.log',
-            ],
-            'add' => [],
-            'edit' => [
-                'admin.payment.action'
-            ],
-            'delete' => [],
-        ],
-    ],
+//    'payment_log' => [
+//        'label' => "Payment Log",
+//        'access' => [
+//            'view' => [
+//                'admin.payment.log',
+//            ],
+//            'add' => [],
+//            'edit' => [
+//                'admin.payment.action'
+//            ],
+//            'delete' => [],
+//        ],
+//    ],
     'payment_log_pending' => [
         'label' => "Payment Request",
         'access' => [
@@ -414,10 +416,6 @@ $arr = [
             'view' => [
                 'admin.users',
                 'admin.users.search',
-//                'admin.user.transaction',
-//                'admin.user.fundLog',
-//                'admin.user.transfer',
-//                'admin.user.loggedIn',
             ],
             'add' => [],
             'edit' => [
@@ -427,14 +425,84 @@ $arr = [
                 'admin.user-update',
                 'admin.userPasswordUpdate',
                 'admin.user-balance-update',
-                'admin.user-loginAccount',
-                'admin.user.transaction',
-                'admin.user.fundLog',
-                'admin.user.transfer',
-                'admin.user.email-send',
-                'admin.user.loggedIn',
-                'admin.user.userKycHistory'
             ],
+            'delete' => [],
+        ],
+    ],
+    'login_user' => [
+        'label' => "Login as user",
+        'access' => [
+            'view' => [
+                'admin.user-loginAccount',
+            ],
+            'add' => [],
+            'edit' => [],
+            'delete' => [],
+        ],
+    ],
+    'transaction_log' => [
+        'label' => "Transaction Log",
+        'access' => [
+            'view' => [
+                'admin.user.transaction',
+            ],
+            'add' => [],
+            'edit' => [],
+            'delete' => [],
+        ],
+    ],
+    'payment_log' => [
+        'label' => "Payment Log",
+        'access' => [
+            'view' => [
+                'admin.user.fundLog',
+            ],
+            'add' => [],
+            'edit' => [],
+            'delete' => [],
+        ],
+    ],
+    'transfer_log' => [
+        'label' => "Transfer Log",
+        'access' => [
+            'view' => [
+                'admin.user.transfer',
+            ],
+            'add' => [],
+            'edit' => [],
+            'delete' => [],
+        ],
+    ],
+    'send_email' => [
+        'label' => "Send Email",
+        'access' => [
+            'view' => [
+                'admin.user.email-send',
+            ],
+            'add' => [],
+            'edit' => [],
+            'delete' => [],
+        ],
+    ],
+    'login_log' => [
+        'label' => "Login Logs",
+        'access' => [
+            'view' => [
+                'admin.user.loggedIn',
+            ],
+            'add' => [],
+            'edit' => [],
+            'delete' => [],
+        ],
+    ],
+    'kyc_record' => [
+        'label' => "Kyc Record",
+        'access' => [
+            'view' => [
+                'admin.user.userKycHistory',
+            ],
+            'add' => [],
+            'edit' => [],
             'delete' => [],
         ],
     ],

@@ -72,44 +72,52 @@
                                 @endif
                             @endif
 .
-
+                                @if(adminAccessRoute(config('role.login_user.access.view')))
                                 <a class="loginAccount btn btn-info btn-sm" href="javascript:void(0)"
                                    data-toggle="modal"
                                    data-target="#signIn"
                                    data-route="{{route('admin.user-loginAccount',$user->id)}}">
                                     <span class="btn-label"><i class="fa fa-sign-in-alt"></i></span> @lang('Login as User')
                                 </a>
+                                @endif
 
-
+                                @if(adminAccessRoute(config('role.transaction_log.access.view')))
                             <a href="{{ route('admin.user.transaction',$user->id) }}"
                                class="btn btn-info btn-sm">
                                 <span class="btn-label"><i class="fas fa-exchange-alt"></i></span> @lang('Transaction Log')
                             </a>
-
+                                @endif
+                                @if(adminAccessRoute(config('role.payment_log.access.view')))
                             <a href="{{ route('admin.user.fundLog',$user->id) }}"
                                class="btn btn-info btn-sm">
                                 <span class="btn-label"><i class="fas fa-money-bill-alt"></i></span> @lang('Payment Log')
                             </a>
+                                @endif
+                                @if(adminAccessRoute(config('role.transfer_log.access.view')))
                             <a href="{{ route('admin.user.transfer',$user->id) }}"
                                class="btn btn-info btn-sm">
                                 <span class="btn-label"><i class="fas fa-exchange-alt"></i></span> @lang('Transfer Log')
                             </a>
+                                @endif
 
-                            @if(adminAccessRoute(config('role.user_management.access.edit')))
+                            @if(adminAccessRoute(config('role.send_email.access.view')))
                             <a href="{{ route('admin.send-email',$user->id) }}"
                                class="btn btn-info btn-sm">
                                 <span class="btn-label"><i class="fas fa-envelope-open"></i></span> @lang('Send Email')
                             </a>
                             @endif
+                                @if(adminAccessRoute(config('role.login_log.access.view')))
                             <a href="{{ route('admin.user.loggedIn',$user->id) }}"
                                class="btn btn-info btn-sm">
                                 <span class="btn-label"><i class="fas fa-history"></i></span> @lang('Login Logs')
                             </a>
-
+                                @endif
+                                @if(adminAccessRoute(config('role.kyc_record.access.view')))
                             <a href="{{ route('admin.user.userKycHistory',$user) }}"
                                class="btn btn-info btn-sm">
                                 <span class="btn-label"><i class="fas fa-file-invoice"></i></span> @lang('KYC Records')
                             </a>
+                                @endif
 
                         </div>
 
@@ -195,7 +203,7 @@
                                         {{-- <input class="form-control" type="text" name="phone" value="{{ $user->phone }}"> --}}
                                         <input type="hidden" class="phone_code" name="phone_code" value="+49">
 
-                                                       <input class="form-control dialcode-set phone" aria-describedby="inputGroup-sizing-lg" d="phone" name="phone"  
+                                                       <input class="form-control dialcode-set phone" aria-describedby="inputGroup-sizing-lg" d="phone" name="phone"
                                                        placeholder="@lang('Enter Phone Number')" value="{{$user->phone}}"
                                                        required>
                                         @error('phone')
@@ -287,8 +295,8 @@
                                                 </label>
                                             </div>
                                         </div>
-                                
-                                       
+
+
                                         <div class="col-md-4">
                                             <label>@lang('SMS Verification')</label>
                                             <div class="custom-switch-btn w-md-80">
@@ -557,7 +565,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.12/js/intlTelInput.min.js"></script>
 <script>
 $(document).ready(function () {
- 
+
     var phoneInputs = document.querySelectorAll(".phone");
     var inputCountry = document.querySelector("#country");
     var phoneCode = "+49";
@@ -578,7 +586,7 @@ $(document).ready(function () {
         input.addEventListener('countrychange', function(e) {
             var selectedCountryData = iti.getSelectedCountryData();
             console.log('Country changed to:', selectedCountryData.name, selectedCountryData.iso2);
-            
+
             // Call your custom function here
             handleCountryChange(selectedCountryData, input);
         });
@@ -586,13 +594,13 @@ $(document).ready(function () {
 
     // Custom function to handle country change
     function handleCountryChange(countryData, inputElement) {
-        phoneCode = countryData.iso2; 
+        phoneCode = countryData.iso2;
         console.log('New country selected:', countryData.name, countryData.dialCode);
         // Perform additional actions based on the countryData
         $('.phone_code').val(countryData.dialCode);
     }
-  
- 
+
+
 });
 
 
