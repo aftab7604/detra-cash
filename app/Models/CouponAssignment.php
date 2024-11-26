@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CouponAssignment extends Model
 {
     use HasFactory;
+    protected $guarded = ['id'];
 
     public function coupon()
     {

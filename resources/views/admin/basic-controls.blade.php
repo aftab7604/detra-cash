@@ -475,20 +475,9 @@
 
                 </div>
                 <hr>
-                <h4>  Referral Reward Setting</h4> <br>
+                <h4>  Referral Reward Setting</h4> <br>                
                 <div class="row">
-                    <div class="form-group  col-sm-12 col-md-12 col-lg-12">
-                        <label>@lang('Referral Reward on Min Transaction')</label>
-                        <input type="text" name="reward_min_txn"
-                               value="{{ old('reward_min_txn') ?? $control->reward_min_txn ?? '' }}"
-                               class="form-control ">
-                        @error('reward_min_txn')
-                        <span class="text-danger">{{ trans($message) }}</span>
-                        @enderror
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-sm-6 col-md-4 col-lg-3">
+                    <div class="form-group col-sm-6 col-md-3 col-lg-3">
                         <label class="d-block">@lang('Referral Reward Status')</label>
                         <div class="custom-switch-btn">
                             <input type='hidden' value='1' name='referral_reward_status'>
@@ -502,7 +491,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-sm-6 col-md-4 col-lg-3">
+                    <div class="form-group col-sm-6 col-md-3 col-lg-3">
                         <label class="text-dark">@lang('Referral Reward Type')</label>
                         <select class="form-control" id="exampleFormControlSelect2" name="referral_reward_type">
                             <option value="percent" {{$control->referral_reward_type == 'percent' ? 'selected' : ''}}>Percent</option>
@@ -515,7 +504,7 @@
                     </div>
 
 
-                    <div class="form-group  col-sm-6 col-md-4 col-lg-4">
+                    <div class="form-group  col-sm-6 col-md-3 col-lg-3">
                         <label>@lang('Referral Reward')</label>
                         <input type="text" name="referral_reward"
                                value="{{ old('referral_reward') ?? $control->referral_reward ?? '' }}"
@@ -524,12 +513,21 @@
                         <span class="text-danger">{{ trans($message) }}</span>
                         @enderror
                     </div>
+                    <div class="form-group  col-sm-6 col-md-3 col-lg-3">
+                        <label>@lang('Referral Coupon Usage Count')</label>
+                        <input type="text" name="referral_reward_usage_count"
+                               value="{{ old('referral_reward_usage_count') ?? $control->referral_reward_usage_count ?? '' }}"
+                               class="form-control ">
+                        @error('referral_reward_usage_count')
+                        <span class="text-danger">{{ trans($message) }}</span>
+                        @enderror
+                    </div>
 
 
                 </div>
 
                 <div class="row">
-                    <div class="form-group col-sm-6 col-md-4 col-lg-3">
+                    <div class="form-group col-sm-6 col-md-3 col-lg-3">
                         <label class="d-block">@lang('Refree Reward Status')</label>
                         <div class="custom-switch-btn">
                             <input type='hidden' value='1' name='refree_reward_status'>
@@ -543,7 +541,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-sm-6 col-md-4 col-lg-3">
+                    <div class="form-group col-sm-6 col-md-3 col-lg-3">
                         <label class="text-dark">@lang('Refree Reward Type')</label>
                         <select class="form-control" id="exampleFormControlSelect3" name="refree_reward_type">
                             <option value="percent" {{$control->refree_reward_type == 'percent' ? 'selected' : ''}}>Percent</option>
@@ -556,7 +554,7 @@
                     </div>
 
 
-                    <div class="form-group  col-sm-6 col-md-4 col-lg-4">
+                    <div class="form-group  col-sm-6 col-md-3 col-lg-3">
                         <label>@lang('Refree Reward')</label>
                         <input type="text" name="refree_reward"
                                value="{{ old('refree_reward') ?? $control->refree_reward ?? '' }}"
@@ -566,7 +564,38 @@
                         @enderror
                     </div>
 
+                    <div class="form-group  col-sm-6 col-md-3 col-lg-3">
+                        <label>@lang('Refree Coupon Usage Count')</label>
+                        <input type="text" name="refree_reward_usage_count"
+                               value="{{ old('refree_reward_usage_count') ?? $control->refree_reward_usage_count ?? '' }}"
+                               class="form-control ">
+                        @error('refree_reward_usage_count')
+                        <span class="text-danger">{{ trans($message) }}</span>
+                        @enderror
+                    </div>
 
+
+                </div>
+
+                <div class="row">
+                    <div class="form-group  col-sm-12 col-md-6 col-lg-6">
+                        <label>@lang('Referral Reward on Min Transaction')</label>
+                        <input type="text" name="reward_min_txn"
+                               value="{{ old('reward_min_txn') ?? $control->reward_min_txn ?? '' }}"
+                               class="form-control ">
+                        @error('reward_min_txn')
+                        <span class="text-danger">{{ trans($message) }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group  col-sm-12 col-md-6 col-lg-6">
+                        <label>@lang('Refree Reward Limit')</label>
+                        <input type="text" name="refree_reward_limit"
+                               value="{{ old('refree_reward_limit') ?? $control->refree_reward_limit ?? '' }}"
+                               class="form-control ">
+                        @error('refree_reward_limit')
+                        <span class="text-danger">{{ trans($message) }}</span>
+                        @enderror
+                    </div>
                 </div>
 
 

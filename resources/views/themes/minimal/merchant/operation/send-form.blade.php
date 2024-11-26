@@ -75,7 +75,15 @@
                                                 <p><i class="las la-dot-circle"></i> {{ trans('discount') }}</p>
                                             </div>
                                             <div class="right-side">
-                                                <p id="payable">- @{{ parseFloat(((send_amount)*discount)/100).toFixed(2) }}  @{{ sendFrom.code }}</p>
+                                                {{-- <p id="payable">- @{{ parseFloat(((send_amount)*discount)/100).toFixed(2) }}  @{{ sendFrom.code }}</p> --}}
+                                                <p id="payable">
+                                                    - @{{ discountType === 'percentage' 
+                                                        ? parseFloat(((send_amount) * discount) / 100).toFixed(2) 
+                                                        : discountType === 'fixed' 
+                                                            ? parseFloat(discount).toFixed(2) 
+                                                            : '0.00' }} 
+                                                    @{{ sendFrom.code }}
+                                                </p>
                                             </div>
                                         </div>
 
@@ -84,7 +92,19 @@
                                                 <p><i class="las la-dot-circle"></i> {{ trans('Total Payable Amount') }}</p>
                                             </div>
                                             <div class="right-side">
-                                                <p id="payable">@{{ parseFloat((send_amount)-((send_amount)*discount)/100).toFixed(2) }} @{{ sendFrom.code }}</p>
+                                                {{-- <p id="payable">@{{ parseFloat((send_amount)-((send_amount)*discount)/100).toFixed(2) }} @{{ sendFrom.code }}</p> --}}
+                                                <p id="payable">
+                                                    @{{ 
+                                                        parseFloat(
+                                                            discountType === 'percentage' 
+                                                                ? (send_amount - ((send_amount * discount) / 100)) 
+                                                                : discountType === 'fixed' 
+                                                                    ? (send_amount - discount) 
+                                                                    : send_amount
+                                                        ).toFixed(2) 
+                                                    }} 
+                                                    @{{ sendFrom.code }}
+                                                </p>
                                             </div>
                                         </div>
 
@@ -174,7 +194,8 @@
                 charge:'',
                 cupon:'',
                 cupone:'',
-                discount:0
+                discount:0,
+                discountType:'fixed'
 
             },
             beforeMount() {
@@ -267,12 +288,14 @@
                     })
                     .then(res => {
                         console.log(res)
-                        if(res.data=='Invalid Coupon'){
-                            self.cupone=res.data
+                        if(!res.data.status){
+                            self.cupone=res.data.message
                             self.discount=0
+                            self.discountType = 'fixed'
                         }else{
                             self.cupone=''
-                            self.discount=res.data.reduce_fee
+                            self.discount=res.data.discount
+                            self.discountType = res.data.discount_type
                         }
                     })
                 },
@@ -385,7 +408,7 @@
                             this.senderCurrencies = res.data.senderCurrencies
                             this.receiverCurrencies = res.data.receiverCurrencies
 
-                            this.getFacilities(this.receiverCurrencies[0].facilities)
+                            this.getFacilities(this.receiverCurrencies[8].facilities)
 
                             var per_transfer = this.senderCurrencies[3].per_transfer + ' ' + this.senderCurrencies[3].code;
                             var daily_limit = this.senderCurrencies[3].daily_limit + ' ' + this.senderCurrencies[3].code;

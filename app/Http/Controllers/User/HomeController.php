@@ -153,11 +153,17 @@ class HomeController extends Controller
         }
 
         if ($request->promo_code != null) {
-            $coupon = Coupon::where('code', trim($request->promo_code))->whereNull('user_id')->first();
-            if (!$coupon) {
+            $checkPromoValid = $this->validateCoupon($user->id,$request->promo_code);
+            if (!$checkPromoValid['status']) {
                 session()->flash('error', 'Invalid promo code');
                 return back()->withInput();
             }
+
+            // $coupon = Coupon::where('code', trim($request->promo_code))->whereNull('user_id')->first();
+            // if (!$coupon) {
+            //     session()->flash('error', 'Invalid promo code');
+            //     return back()->withInput();
+            // }
 
         }
 
@@ -233,20 +239,51 @@ class HomeController extends Controller
 
 
         if ($request->cupone != null) {
-            $coupon = Coupon::where('code', trim($request->cupone))->whereNull('user_id')->first();
-            if (!$coupon) {
+            $checkPromoValid = $this->validateCoupon($user->id,$request->cupone);
+            if (!$checkPromoValid['status']) {
                 session()->flash('error', 'Invalid promo code');
                 return back()->withInput();
             }
-            if ($sendMoney->promo_code == null) {
-                $sendMoney->discount = ($sendMoney->payable_amount * $coupon->reduce_fee) / 100;
-                $sendMoney->promo_code = $coupon->code;
-                $sendMoney->save();
 
-                $coupon->user_id =  $this->user->id;
-                $coupon->used_at = Carbon::now();
-                $coupon->update();
+            $applyCoupon = $this->applyCoupon($user->id, $request->cupone, $sendMoney->payable_amount);
+            if(!$applyCoupon['status']){
+                session()->flash('error', $applyCoupon['message']);
+                return back()->withInput();
             }
+
+            $sendMoney->discount = $applyCoupon['discount'];             
+            $sendMoney->promo_code = $request->cupone;
+            $sendMoney->save();
+            // OLD CODE START
+            
+            // if ($sendMoney->promo_code == null) {
+            //     $applyCoupon = $this->applyCoupon($user->id, $request->coupone, $sendMoney->payable_amount);
+            //     dd($applyCoupon);
+            //     //     $sendMoney->discount = ($sendMoney->payable_amount * $coupon->reduce_fee) / 100;
+            //     //     $sendMoney->promo_code = $coupon->code;
+            //     //     $sendMoney->save();
+    
+            //     //     $coupon->user_id =  $this->user->id;
+            //     //     $coupon->used_at = Carbon::now();
+            //     //     $coupon->update();
+            //     // 
+            // }
+           
+            // $coupon = Coupon::where('code', trim($request->cupone))->whereNull('user_id')->first();
+            // if (!$coupon) {
+            //     session()->flash('error', 'Invalid promo code');
+            //     return back()->withInput();
+            // }
+            // if ($sendMoney->promo_code == null) {
+            //     $sendMoney->discount = ($sendMoney->payable_amount * $coupon->reduce_fee) / 100;
+            //     $sendMoney->promo_code = $coupon->code;
+            //     $sendMoney->save();
+
+            //     $coupon->user_id =  $this->user->id;
+            //     $coupon->used_at = Carbon::now();
+            //     $coupon->update();
+            // }
+            // OLD CODE END
         }
         //log_action('Add calculation', '');
         return redirect()->route('user.sendMoney', $sendMoney);
@@ -352,12 +389,14 @@ class HomeController extends Controller
     }
 
     public function applycupon(Request $request){
-        $coupon = Coupon::where('code', trim($request->coupon))->whereNull('user_id')->get();
-        if(count($coupon)>0){
-            return $coupon[0];
-        }else{
-            return 'Invalid Coupon';
-        }
+        $user = Auth::user();
+        return $this->validateCoupon($user->id,$request->coupon);
+        // $coupon = Coupon::where('code', trim($request->coupon))->whereNull('user_id')->get();
+        // if(count($coupon)>0){
+        //     return $coupon[0];
+        // }else{
+        //     return 'Invalid Coupon';
+        // }
     }
 
     public function sendMoneyFormData(SendMoney $sendMoney, Request $request)
@@ -2152,7 +2191,7 @@ class HomeController extends Controller
         }
 
         // Check if the coupon is user-specific
-        if ($coupon->type === 'user-specific') {
+        if ($coupon->type === 'user_specific') {
             // Find the coupon assignment for the user
             $assignment = CouponAssignment::where('coupon_id', $coupon->id)
                 ->where('user_id', $userId)
@@ -2174,7 +2213,7 @@ class HomeController extends Controller
                 return ['status' => false, 'message' => 'Coupon usage limit reached.'];
             }
 
-            return ['status' => true, 'message' => 'Coupon is valid.', 'discount' => $coupon->discount_value];
+            return ['status' => true, 'message' => 'Coupon is valid.', 'discount' => $coupon->discount_value,'discount_type'=>$coupon->discount_type];
         }
 
         // Validate promotional coupon
@@ -2190,9 +2229,101 @@ class HomeController extends Controller
                 return ['status' => false, 'message' => 'Coupon usage limit reached.'];
             }
 
-            return ['status' => true, 'message' => 'Coupon is valid.', 'discount' => $coupon->discount_value];
+            return ['status' => true, 'message' => 'Coupon is valid.', 'discount' => $coupon->discount_value,'discount_type'=>$coupon->discount_type];
         }
 
         return ['status' => false, 'message' => 'Invalid coupon type.'];
+    }
+
+    public function applyCoupon(int $userId, string $couponCode, float $orderAmount)
+    {
+        // Start a database transaction
+        DB::beginTransaction();
+
+        try {
+            // Fetch the coupon
+            $coupon = Coupon::where('code', $couponCode)->first();
+
+            if (!$coupon) {
+                return ['status' => false, 'message' => 'Invalid coupon code.'];
+            }
+
+            // Check if the coupon is user-specific
+            if ($coupon->type === 'user_specific') {
+                // Fetch coupon assignment
+                $assignment = CouponAssignment::where('coupon_id', $coupon->id)
+                    ->where('user_id', $userId)
+                    ->first();
+
+                if (!$assignment) {
+                    return ['status' => false, 'message' => 'Coupon not assigned to this user.'];
+                }
+
+                // Validate the coupon for the user
+                $isExpired = $coupon->expiry_date && Carbon::now()->greaterThan($coupon->expiry_date);
+                $isUsageLimitReached = $coupon->usage_limit !== null && $assignment->used_count >= $coupon->usage_limit;
+
+                if ($isExpired) {
+                    return ['status' => false, 'message' => 'Coupon has expired.'];
+                }
+
+                if ($isUsageLimitReached) {
+                    return ['status' => false, 'message' => 'Coupon usage limit reached.'];
+                }
+
+                // Increment usage counts
+                $assignment->increment('used_count');
+                $coupon->increment('used_count');
+
+            } else {
+                // Validate promotional coupon
+                $isExpired = $coupon->expiry_date && Carbon::now()->greaterThan($coupon->expiry_date);
+                $isUsageLimitReached = $coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit;
+
+                if ($isExpired) {
+                    return ['status' => false, 'message' => 'Coupon has expired.'];
+                }
+
+                if ($isUsageLimitReached) {
+                    return ['status' => false, 'message' => 'Coupon usage limit reached.'];
+                }
+
+                // Increment the global usage count
+                $coupon->increment('used_count');
+            }
+
+            // Calculate the discount
+            $discount = 0;
+            if ($coupon->discount_type === 'percentage') {
+                $discount = ($coupon->discount_value / 100) * $orderAmount;
+            } elseif ($coupon->discount_type === 'fixed') {
+                $discount = $coupon->discount_value;
+            }
+
+            // Ensure the discount does not exceed the order amount
+            $discount = min($discount, $orderAmount);
+
+            // Log the usage
+            CouponUsageLog::create([
+                'coupon_id' => $coupon->id,
+                'user_id' => $userId,
+                'used_at' => Carbon::now(),
+            ]);
+
+            // Commit the transaction
+            DB::commit();
+
+            return [
+                'status' => true,
+                'message' => 'Coupon applied successfully.',
+                'discount' => $discount,
+                'final_amount' => $orderAmount - $discount,
+            ];
+
+        } catch (\Exception $e) {
+            // Rollback the transaction on error
+            DB::rollBack();
+            return ['status' => false, 'message' => 'Failed to apply coupon. Please try again later.'];
+        }
     }
 }

@@ -12,6 +12,9 @@ use App\Models\User;
 use App\Models\Configure;
 use App\Models\ReferralReward;
 use App\Models\Country;
+use App\Models\Coupon;
+use App\Models\CouponAssignment;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Facades\App\Services\ReloadlyService;
 use Facades\App\Services\Flutterwave;
@@ -19,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Stevebauman\Purify\Facades\Purify;
 use Facades\App\Services\BasicService;
+
 
 class TransferLogController extends Controller
 {
@@ -229,72 +233,7 @@ class TransferLogController extends Controller
         
         $user = $sendMoney->user;
         if($req->status == 1){
-            $txnExist = SendMoney::where(["user_id"=>$user->id,'status'=>1])->first();
-            if(!$txnExist){
-                $reward_redeemed = ReferralReward::where("user_id",$user->id)->first();
-                if(!$reward_redeemed){
-                    $send_amount = $sendMoney->send_amount;
-                    $send_currency = Country::find($sendMoney->send_currency_id);
-                    if($send_currency->code != 'EUR'){ // covert other currency into euro
-                     
-                    }
-    
-                    $reward = 0;
-                    $Rreward = 0;
-    
-                    $conf = Configure::find(1);
-                    if($send_amount >= $conf->reward_min_txn ){
-
-                        if($conf->referral_reward_status = 1){
-                            $usr = User::find($user->id);
-                            $reward = $conf->referral_reward;
-                            if($conf->referral_reward_type == 'percent'){
-                                $reward = (($send_amount / 100) * $reward);
-                            }
-        
-                            $trx_id = strRandom();
-                            $remarks = "You got commission from #".$sendMoney->invoice;
-                            BasicService::makeTransaction($user, getAmount($reward),  0, '+', $trx_id, $remarks );
-        
-                            $usr->balance +=  $reward;
-                            $usr->save();
-        
-                        }
-        
-                        if($conf->refree_reward_status = 1){
-                            $usr = User::where("id",$user->id)->with('referral')->first();
-                            if($user->referral){
-                                $Rreward = $conf->refree_reward;
-                                if($conf->refree_reward_type == 'percent'){
-                                    $Rreward = (($send_amount / 100) * $Rreward);
-                                }
-            
-                                $trx_id = strRandom();
-                                $remarks = "You got commission from #".$sendMoney->invoice;
-                                BasicService::makeTransaction($usr->referral, getAmount($Rreward),  0, '+', $trx_id, $remarks );
-            
-                                $bal = $usr->referral->balance + $Rreward;
-                                User::where("id",$usr->referral->id)->update([
-                                    'balance'=>$bal
-                                ]);
-                            }
-                            
-                        }
-        
-                        //creating record as redeemed referal
-                        ReferralReward::create([
-                            "user_id"=>$user->id,
-                            'referral_amount'=>$reward,
-                            'refree_amount'=>$Rreward
-                        ]);
-
-                    }
-                    
-
-                  
-                }
-            }
-            
+            $this->applyReferralReward($user,$sendMoney);
                 
             //complete
             $sendMoney->admin_id = auth()->guard('admin')->id();
@@ -303,12 +242,12 @@ class TransferLogController extends Controller
             $sendMoney->received_at = Carbon::now();
             $sendMoney->save();
 
-            $this->sendMailSms($user, 'MONEY_TRANSFER_COMPLETE', [
-                'amount' => getAmount($sendMoney->totalPay, config('basic.fraction_number')),
-                'currency' => $sendMoney->send_curr,
-                'invoice' => $sendMoney->invoice,
-                'admin_reply' => $sendMoney->admin_reply,
-            ]);
+            // $this->sendMailSms($user, 'MONEY_TRANSFER_COMPLETE', [
+            //     'amount' => getAmount($sendMoney->totalPay, config('basic.fraction_number')),
+            //     'currency' => $sendMoney->send_curr,
+            //     'invoice' => $sendMoney->invoice,
+            //     'admin_reply' => $sendMoney->admin_reply,
+            // ]);
             $msg = [
                 'amount' => getAmount($sendMoney->totalPay, config('basic.fraction_number')),
                 'currency' => $sendMoney->send_curr
@@ -319,10 +258,11 @@ class TransferLogController extends Controller
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
 
-            $this->userPushNotification($user, 'MONEY_TRANSFER_COMPLETE', $msg, $action);
+            // $this->userPushNotification($user, 'MONEY_TRANSFER_COMPLETE', $msg, $action);
             log_admin_activity('Update trnsfer status', 'Transfer was completed ('.$sendMoney->invoice.')');
             session()->flash('success', 'Your transfer has been completed');
         }
+
         if($req->status == 3){
             //Cancelled
             $sendMoney->admin_id = auth()->guard('admin')->id();
@@ -352,6 +292,133 @@ class TransferLogController extends Controller
         }
 
         return back();
+    }
+
+    public function applyReferralReward($user,$sendMoney){
+        $txnExist = SendMoney::where(["user_id"=>$user->id,'status'=>1])->first();
+        if(!$txnExist){
+            $reward_redeemed = ReferralReward::where("user_id",$user->id)->first();
+            if(!$reward_redeemed){
+                
+                 
+                $send_amount = $sendMoney->send_amount;
+                $send_currency = Country::find($sendMoney->send_currency_id);
+                if($send_currency->code != 'EUR'){ // covert other currency into euro
+                    
+                }
+
+                $reward = 0;
+                $Rreward = 0;
+
+                $referralCoupon = null;
+                $refreeCode = null;       
+                $refreeCoupon = null;
+
+                $conf = Configure::find(1);
+                if($send_amount >= $conf->reward_min_txn ){
+
+                    if($conf->referral_reward_status = 1){
+                        // $usr = User::find($user->id);
+                        $reward = $conf->referral_reward;
+                        if($conf->referral_reward_type == 'percent'){
+                            $reward = (($send_amount / 100) * $reward);
+                        }
+
+                        $couponData = [
+                            'discount_type' => 'fixed', // e.g., 'percentage' or 'fixed'
+                            'discount_value' => $reward, // e.g., 10 or 50
+                            'expiry_date' => null,
+                            'usage_limit' => $conf->referral_reward_usage_count,
+                        ];
+
+                        $referral_coupon_response = $this->CreateAndAssignCouponToUser($user,$couponData);
+                        $referralCoupon = $referral_coupon_response['coupon_code'];
+                        
+                        // $trx_id = strRandom();
+                        // $remarks = "You got commission from #".$sendMoney->invoice;
+                        // BasicService::makeTransaction($user, getAmount($reward),  0, '+', $trx_id, $remarks );
+    
+                        // $usr->balance +=  $reward;
+                        // $usr->save();
+    
+                    }
+
+                    
+                    if($conf->refree_reward_status = 1){
+                        $usr = User::where("id",$user->referral_id)->with('referralRewards')->first();
+                        if($usr){
+                            $refreeCode = $usr->username;
+                            if($usr->referralRewards && $usr->referralRewards->count() <= $conf->refree_reward_limit){
+                                $Rreward = $conf->refree_reward;
+                                if($conf->refree_reward_type == 'percent'){
+                                    $Rreward = (($send_amount / 100) * $Rreward);
+                                }
+
+                                $rcouponData = [
+                                    'discount_type' => 'fixed', // e.g., 'percentage' or 'fixed'
+                                    'discount_value' => $Rreward, // e.g., 10 or 50
+                                    'expiry_date' => null,
+                                    'usage_limit' => $conf->refree_reward_usage_count,
+                                ];
+                                $refree_coupon_response = $this->CreateAndAssignCouponToUser($usr,$rcouponData);
+                                $refreeCoupon = $refree_coupon_response['coupon_code'];
+                            }
+                            
+                        }
+                    }
+    
+                    //creating record as redeemed referal
+                    ReferralReward::create([
+                        "user_id"=>$user->id,
+                        'referral_amount'=>$reward,
+                        'referral_coupon'=>$referralCoupon,
+                        'refree_code'=>$refreeCode,
+                        'refree_amount'=>$Rreward,
+                        'refree_coupon'=>$refreeCoupon,
+                    ]);
+
+                }
+            }
+        }
+    }
+
+    public function CreateAndAssignCouponToUser($user,$couponData){
+        // Generate a unique coupon code
+        $uniqueCode = $this->generateUniqueCouponCode();
+
+        // Create the coupon
+        $coupon = Coupon::create([
+            'code' => $uniqueCode,
+            'type' => 'user_specific', // Setting type to user-specific
+            'discount_type' => $couponData['discount_type'], // e.g., 'percentage' or 'fixed'
+            'discount_value' => $couponData['discount_value'], // e.g., 10 or 50
+            'expiry_date' => $couponData['expiry_date'] ?? null, // Optional
+            'usage_limit' => $couponData['usage_limit'] ?? null, // Optional
+            'used_count' => 0, // Default
+        ]);
+
+        // Assign the coupon to the user
+        CouponAssignment::create([
+            'coupon_id' => $coupon->id,
+            'user_id' => $user->id,
+            'used_count' => 0, // Default
+        ]);
+
+        
+        return [
+            'status' => true,
+            'message' => 'Coupon created and assigned successfully.',
+            'coupon_code' => $uniqueCode,
+        ];
+    }
+
+    private function generateUniqueCouponCode(){
+        do {
+            // Generate a random alphanumeric code
+            $code = strtoupper(Str::random(10));
+        } while (Coupon::where('code', $code)->exists());
+
+        return $code;
     }
 
 
