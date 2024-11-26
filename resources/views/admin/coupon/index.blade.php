@@ -21,16 +21,17 @@
                     <thead class="thead-dark">
                     <tr>
                         <th scope="col">@lang('SL')</th>
-                        <th scope="col">@lang('Coupon Code')</th>
-                        <th scope="col">@lang('Reduce Fee (%)')</th>
+                        <th scope="col">@lang('Code')</th>
+                        <th scope="col">@lang('Type')</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @forelse($coupons as $data)
+                    @forelse($coupons as $k => $data)
                         <tr>
-                            <td data-label="@lang('SL')">{{loopIndex($coupons) + $loop->index	 }}</td>
-                            <td data-label="@lang('Coupon Code')" class="font-weight-bold">@lang($data->code)</td>
-                            <td data-label="@lang('Reduce Fee (%)')" class="font-weight-bold">{{getAmount($data->reduce_fee)}}{{trans('%')}}</td>
+                            {{-- <td data-label="@lang('SL')">{{loopIndex($coupons) + $loop->index	 }}</td> --}}
+                            <td data-label="@lang('SL')">{{$k + 1}}</td>
+                            <td data-label="@lang('Code')" class="font-weight-bold">@lang($data->code)</td>
+                            <td data-label="@lang('Type')" class="font-weight-bold">{{$data->type === 'promotional' ? 'Promotional' : 'User-Specific'}}</td>
                         </tr>
                     @empty
                         <tr>
@@ -39,7 +40,7 @@
                     @endforelse
                     </tbody>
                 </table>
-                {{$coupons->links('partials.pagination')}}
+                {{-- {{$coupons->links('partials.pagination')}} --}}
 
             </div>
         </div>

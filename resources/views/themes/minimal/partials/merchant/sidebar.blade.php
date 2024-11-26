@@ -69,6 +69,13 @@
                     </a>
                 </li>
 
+                <li class="sidebar-item">
+                    <a class="sidebar-link"  href="{{route('user.my-coupons')}}" aria-expanded="false">
+                        <i class="fas fa-receipt"></i>
+                        <span class="hide-menu">@lang('My Coupons')</span>
+                    </a>
+                </li>
+
                 <li class="nav-small-cap"><span class="hide-menu">@lang('LOG')</span></li>
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route('user.transaction')}}" aria-expanded="false">
