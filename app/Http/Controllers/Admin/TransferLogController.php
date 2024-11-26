@@ -242,12 +242,12 @@ class TransferLogController extends Controller
             $sendMoney->received_at = Carbon::now();
             $sendMoney->save();
 
-            // $this->sendMailSms($user, 'MONEY_TRANSFER_COMPLETE', [
-            //     'amount' => getAmount($sendMoney->totalPay, config('basic.fraction_number')),
-            //     'currency' => $sendMoney->send_curr,
-            //     'invoice' => $sendMoney->invoice,
-            //     'admin_reply' => $sendMoney->admin_reply,
-            // ]);
+            $this->sendMailSms($user, 'MONEY_TRANSFER_COMPLETE', [
+                'amount' => getAmount($sendMoney->totalPay, config('basic.fraction_number')),
+                'currency' => $sendMoney->send_curr,
+                'invoice' => $sendMoney->invoice,
+                'admin_reply' => $sendMoney->admin_reply,
+            ]);
             $msg = [
                 'amount' => getAmount($sendMoney->totalPay, config('basic.fraction_number')),
                 'currency' => $sendMoney->send_curr
@@ -258,7 +258,7 @@ class TransferLogController extends Controller
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
 
-            // $this->userPushNotification($user, 'MONEY_TRANSFER_COMPLETE', $msg, $action);
+            $this->userPushNotification($user, 'MONEY_TRANSFER_COMPLETE', $msg, $action);
             log_admin_activity('Update trnsfer status', 'Transfer was completed ('.$sendMoney->invoice.')');
             session()->flash('success', 'Your transfer has been completed');
         }

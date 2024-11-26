@@ -20,4 +20,9 @@ class CouponAssignment extends Model
         return $this->hasMany(CouponUsageLog::class, 'coupon_id', 'coupon_id')
             ->where('user_id', $this->user_id);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
