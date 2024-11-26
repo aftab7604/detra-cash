@@ -1,5 +1,5 @@
 
-@extends($theme.'layouts.merchant')
+@extends($theme.'layouts.user')
 @section('title',trans($page_title))
 @section('content')
     <div class="page-header card card-primary m-0 m-md-4 my-4 m-md-0 p-5 shadow">

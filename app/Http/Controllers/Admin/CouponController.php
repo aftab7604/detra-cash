@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Stevebauman\Purify\Facades\Purify;
+
 
 class CouponController extends Controller
 {
@@ -43,16 +45,39 @@ class CouponController extends Controller
     public function couponUsed()
     {
         $data['page_title'] = "Used Coupon List";
-        $data['coupons'] = Coupon::select('id','code','reduce_fee','user_id','used_at')->latest()->whereNotNull('user_id')->with(['user:id,username,email'])->paginate(config('basic.paginate'));
+        // $data['coupons'] = Coupon::select('id','code','reduce_fee','user_id','used_at')->latest()->whereNotNull('user_id')->with(['user:id,username,email'])->paginate(config('basic.paginate'));
+        $data['coupons'] = $this->getExpiredOrUsedCoupons(10);
         return view('admin.coupon.used',$data);
     }
+
+    public function getExpiredOrUsedCoupons($perPage = 10)
+    {
+        // Get expired or fully used coupons
+        $coupons = Coupon::where(function ($query) {
+            // Expired coupons
+            $query->whereNotNull('expiry_date')
+                ->where('expiry_date', '<', now());
+        })
+        ->orWhere(function ($query) {
+            // Fully used coupons
+            $query->whereNotNull('usage_limit')
+                ->whereColumn('usage_limit', '<=', 'used_count');
+        })
+        ->latest()
+        ->paginate($perPage);
+
+        return $coupons;
+    }
+
 
     public function store(Request $request)
     {
         $excp = Purify::clean($request->except('_token', '_method'));
         $rules = [
             'level' => 'required|numeric',
-            'reduce_fee' => 'required|numeric'
+            'usage_limit' => 'required|numeric',
+            'discount' => 'required|numeric',
+            'discount_type' => 'required|string',
         ];
         $validate = Validator::make($request->all(), $rules);
         if ($validate->fails()) {
@@ -61,13 +86,28 @@ class CouponController extends Controller
 
         for($i=0 ; $i < $excp['level']; $i++ ){
             $data = new  Coupon();
-            $data->code = code(6);
-            $data->reduce_fee = (float) $excp['reduce_fee'];
-            $data->used_at = null;
+            $data->code = $this->generateUniqueCouponCode();
+            $data->type = 'promotional';
+            $data->discount_type = $excp['discount_type'];
+            $data->discount_value = (float) $excp['discount'];
+            $data->usage_limit = (float) $excp['usage_limit'];
+            $data->used_count = 0;
+            $data->expiry_date = null;
+            $data->created_by = 1;
+
             $data->save();
         }
 
         log_admin_activity('Update coupon list', 'Updated coupon list');
         return back()->with('success', $excp['level'] .' '.'Coupons Has Been Added.');
+    }
+
+    private function generateUniqueCouponCode(){
+        do {
+            // Generate a random alphanumeric code
+            $code = strtoupper(Str::random(10));
+        } while (Coupon::where('code', $code)->exists());
+
+        return $code;
     }
 }

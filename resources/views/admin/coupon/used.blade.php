@@ -13,30 +13,26 @@
                     <thead class="thead-dark">
                     <tr>
                         <th scope="col">@lang('SL')</th>
-                        <th scope="col">@lang('User')</th>
-                        <th scope="col">@lang('Coupon Code')</th>
-                        <th scope="col">@lang('Reduce Fee (%)')</th>
-                        <th scope="col">@lang('Used At')</th>
+                        <th scope="col">@lang('Code')</th>
+                        <th scope="col">@lang('Value')</th>
+                        <th scope="col">@lang('Status')</th>
+                        {{-- <th scope="col">@lang('Used At')</th> --}}
                     </tr>
                     </thead>
                     <tbody>
                     @forelse($coupons as $data)
                         <tr>
                             <td data-label="@lang('SL')">{{loopIndex($coupons) + $loop->index	 }}</td>
-                            <td data-label="@lang('User')" class="font-weight-bold">
-                                <a href="{{route('admin.user-edit',[$data->user_id])}}">
-                                    {{optional($data->user)->username}}
-                                </a>
-                            </td>
-                            <td data-label="@lang('Coupon Code')">@lang($data->code)</td>
-                            <td data-label="@lang('Reduce Fee (%)')">{{getAmount($data->reduce_fee)}}{{trans('%')}}</td>
+                            <td data-label="@lang('Code')" class="font-weight-bold">{{$data->code}}</td>
+                            <td data-label="@lang('Value')">@lang($data->discount_value) (@lang($data->discount_type))</td>
+                            <td data-label="@lang('Status')">{{ ($data->expiry_date < now() ? 'Expired' : 'Fully Used')}}</td>
 
-                            <td data-label="@lang('Used At')">{{dateTime($data->used_at)}}</td>
+                            {{-- <td data-label="@lang('Used At')">{{dateTime($data->used_at)}}</td> --}}
 
                         </tr>
                     @empty
                         <tr>
-                            <td class="text-center text-danger" colspan="3">@lang('No Data Found')</td>
+                            <td class="text-center text-danger" colspan="4">@lang('No Data Found')</td>
                         </tr>
                     @endforelse
                     </tbody>
