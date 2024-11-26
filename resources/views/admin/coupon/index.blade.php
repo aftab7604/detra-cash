@@ -59,13 +59,36 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label>{{trans('HOW MANY COUPON CODE')}}</label>
-                            <input type="number" name="level" class="form-control form-control-lg" required>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{trans('HOW MANY COUPON CODE')}}</label>
+                                    <input type="number" name="level" class="form-control form-control-lg" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{trans('COUPON USAGE LIMIT')}}</label>
+                                    <input type="number" name="usage_limit" class="form-control form-control-lg" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>{{trans('Reduce fee(%)')}}</label>
-                            <input type="number" name="reduce_fee" class="form-control form-control-lg" required>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{trans('DISCOUNT')}}</label>
+                                    <input type="number" name="discount" class="form-control form-control-lg" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{trans('DISCOUNT TYPE')}}</label>
+                                    <select name="discount_type" class="form-control form-control-lg" required>
+                                        <option value="fixed">Fixed</option>
+                                        <option value="percentage">Percentage</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
