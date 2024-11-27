@@ -19,7 +19,7 @@ Route::get('/cron', 'FrontendController@cron')->name('cron');
 
 Route::get('/clear', function () {
     // $pas = Hash::make("123456");
-    // dd($pas); 
+    // dd($pas);
     $output = new \Symfony\Component\Console\Output\BufferedOutput();
     Artisan::call('optimize:clear', array(), $output);
     return redirect()->back()->with('success', 'Cache Clear Successfully ');
@@ -57,8 +57,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::put('/profile', 'Admin\DashboardController@profileUpdate')->name('profileUpdate');
         Route::get('/password', 'Admin\DashboardController@password')->name('password');
         Route::put('/password', 'Admin\DashboardController@passwordUpdate')->name('passwordUpdate');
-        
-        Route::group(['middleware'=>['permission']],function(){ 
+
+        Route::group(['middleware'=>['permission']],function(){
             Route::get('push-chat-show/{id}', 'ChatNotificationController@showByAdmin')->name('push.chat.show');
             Route::post('push-chat-newMessage', 'ChatNotificationController@newMessageByAdmin')->name('push.chat.newMessage');
 
@@ -68,7 +68,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
             Route::match(['get', 'post'], 'pusher-config', 'SiteNotificationController@pusherConfig')->name('pusher.config');
 
 
-           
+
 
 
             Route::get('/dashboard', 'Admin\DashboardController@dashboard')->name('dashboard');
@@ -257,7 +257,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
             Route::post('/user/loginAccount/{id}', 'Admin\UsersController@loginAccount')->name('user-loginAccount');
 
             Route::get('users/kyc/pending', 'Admin\UsersController@kycPendingList')->name('users.kyc.pending');
-            Route::get('users/kyc', 'Admin\UsersController@kycList')->name('users.kyc');
+            Route::get('users/kyc', 'Admin\UsersController@kycList')->name('users.kyclogs');
             Route::put('users/kycAction/{id}', 'Admin\UsersController@kycAction')->name('users.Kyc.action');
             Route::get('user/{user}/kyc', 'Admin\UsersController@userKycHistory')->name('user.userKycHistory');
 
@@ -368,7 +368,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
             Route::put('blog/update/{id}', 'Admin\BlogController@update')->name('blog.update');
             Route::delete('blog/delete/{id}', 'Admin\BlogController@delete')->name('blog.delete');
         });
-        
+
     });
 });
 
@@ -444,9 +444,9 @@ Route::get('/stripeajax', 'PaymentController@stripeajax')->name('stripeajax');
 
                 Route::get('/withdraw-history', 'User\PayoutController@withdrawHistory')->name('withdraw.history');
                 Route::get('/withdraw-history-search', 'User\PayoutController@withdrawHistorySearch')->name('withdraw.history.search');
-                
+
                 Route::get('/my-coupons', 'User\HomeController@myCoupons')->name('my-coupons');
-                
+
             });
 
 

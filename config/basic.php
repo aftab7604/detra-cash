@@ -34,7 +34,7 @@
   'address_verification' => 0,
   'merchant_commission' => 2.0,
   'merchant_profit' => 2.0,
-  'maintenance' => 1,
+  'maintenance' => 0,
   'session_expire' => 10000,
   'client_id' => 'bHngBIxsCcM3C5rFLptiffQQ1gXaSJ5S',
   'client_secret' => 'pc1U6Qojgv-cS1t8NR0N6pWNHOBhZ9-DWWChIJoYt4Cyjw1IGKvFpJo1kOcFI9y',

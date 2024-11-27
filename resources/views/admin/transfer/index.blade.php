@@ -102,7 +102,7 @@
                                     <a href="{{route('admin.money-transfer.details',$data)}}" class="btn btn-sm btn-outline-primary btn-icon">
                                             <i class="fa fa-eye"></i>
                                     </a>
-                                    @endif
+                                     @endif
                                 </td>
                         </tr>
                     @empty
@@ -119,9 +119,6 @@
             </div>
         </div>
     </div>
-
-
-
 
 @endsection
 @push('js')

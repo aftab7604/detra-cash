@@ -61,7 +61,7 @@
                         <th scope="col">@lang('Payable')</th>
                         <th scope="col">@lang('Status')</th>
 
-                        @if(adminAccessRoute(array_merge(config('role.payment_log.access.edit'), config('role.payment_log_pending.access.edit'))))
+                        @if(adminAccessRoute(array_merge(config('role.payment_log1.access.edit'), config('role.payment_log_pending.access.edit'))))
                         <th scope="col">@lang('Action')</th>
                         @endif
                     </tr>
@@ -94,7 +94,7 @@
                                     <span class="badge badge-danger badge-pill">@lang('Rejected')</span>
                                 @endif
                             </td>
-                            @if(adminAccessRoute(array_merge(config('role.payment_log.access.edit'), config('role.payment_log_pending.access.edit'))))
+                            @if(adminAccessRoute(array_merge(config('role.payment_log1.access.edit'), config('role.payment_log_pending.access.edit'))))
                             <td data-label="@lang('Action')">
                                 @php
                                     if($fund->detail){

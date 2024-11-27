@@ -87,7 +87,7 @@
                                 <span class="btn-label"><i class="fas fa-exchange-alt"></i></span> @lang('Transaction Log')
                             </a>
                                 @endif
-                                @if(adminAccessRoute(config('role.payment_log.access.view')))
+                                @if(adminAccessRoute(config('role.payment_log1.access.view')))
                             <a href="{{ route('admin.user.fundLog',$user->id) }}"
                                class="btn btn-info btn-sm">
                                 <span class="btn-label"><i class="fas fa-money-bill-alt"></i></span> @lang('Payment Log')

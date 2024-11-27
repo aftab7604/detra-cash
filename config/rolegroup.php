@@ -314,7 +314,7 @@ $remittance_history = [
                 'view' => [
                     'admin.money-transfer',
                     'admin.money-transfer.search',
-                    'admin.money-transfer.details',
+//                    'admin.money-transfer.details',
 //                    'admin.money-transfer.flutterAction',
 //                    'admin.money-transfer.flutterVerifyAcc',
 //                    'admin.money-transfer.flutterVerifyTrx',
@@ -379,7 +379,10 @@ $payment_settings = [
                     'admin.update.payment.methods',
                     'admin.payment.methods.deactivate'
                 ],
-                'delete' => [],
+                'delete' => [
+                    'admin.payment.methods.withdrawinfodestroy',
+                    'admin.payment.methods.currencydestroy'
+                ],
             ],
         ],
         'payment_gateway' => [
@@ -387,10 +390,11 @@ $payment_settings = [
             'access' => [
                 'view' => [
                     'admin.deposit.manual.index',
+                ],
+                'add' => [
                     'admin.deposit.manual.create',
                     'admin.deposit.manual.store'
                 ],
-                'add' => [],
                 'edit' => [
                     'admin.deposit.manual.edit',
                     'admin.deposit.manual.update',
@@ -407,12 +411,12 @@ $payment_settings = [
                 ],
                 'add' => [],
                 'edit' => [
-                    'admin.payment.action'
+//                    'admin.payment.action'
                 ],
                 'delete' => [],
             ],
         ],
-        'payment_log' => [
+        'payment_log1' => [
             'label' => "Payment Log",
             'access' => [
                 'view' => [
@@ -420,7 +424,7 @@ $payment_settings = [
                 ],
                 'add' => [],
                 'edit' => [
-//                    'admin.payment.action'
+                    'admin.payment.action'
                 ],
                 'delete' => [],
             ],
@@ -557,7 +561,8 @@ $manage_user = [
             'access' => [
                 'view' => [],
                 'add' => [
-                    'admin.merchants.create'
+                    'admin.merchants.create',
+                    'admin.merchants.store'
                 ],
                 'edit' => [],
                 'delete' => []
@@ -592,7 +597,7 @@ $manage_user = [
             'label' => "KYC Log",
             'access' => [
                 'view' => [
-                    'admin.users.kyc',
+                    'admin.users.kyclogs',
                 ],
                 'add' => [],
                 'edit' => [],
@@ -809,11 +814,11 @@ $controls = [
             'access' => [
                 'view' => [
                     'admin.email-template.show',
-                    'admin.email-template.update',
                 ],
                 'add' => [],
                 'edit' => [
                     'admin.email-template.edit',
+                    'admin.email-template.update',
                 ],
                 'delete' => [],
             ],
@@ -829,7 +834,7 @@ $controls = [
                 ],
                 'add' => [],
                 'edit' => [
-//                    'admin.sms.config',
+                    'admin.sms_config.access.edit',
                 ],
                 'delete' => [],
             ],
@@ -840,11 +845,11 @@ $controls = [
             'access' => [
                 'view' => [
                     'admin.sms-template',
-                    'admin.sms-template.update',
                 ],
                 'add' => [],
                 'edit' => [
                     'admin.sms-template.edit',
+                    'admin.sms-template.update',
                 ],
                 'delete' => [],
             ],
@@ -895,6 +900,10 @@ $controls = [
                     'admin.language.edit',
                     'admin.language.update',
                     'admin.language.keywordEdit',
+                    'admin.language.storeKey',
+                    'admin.language.updateKey',
+                    'admin.language.deleteKey',
+                    'admin.language.importJson'
                 ],
                 'delete' => [
                     'admin.language.delete'
