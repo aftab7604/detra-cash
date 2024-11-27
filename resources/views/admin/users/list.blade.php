@@ -105,7 +105,7 @@
                                 <span
                                     class="badge badge-pill {{ $user->status == 0 ? 'badge-danger' : 'badge-success' }}">{{ $user->status == 0 ? 'Inactive' : 'Active' }}</span>
                             </td>
-                            @if(adminAccessRoute(config('role.user_management.access.edit')))
+
                             <td data-label="@lang('Action')">
                                 <div class="dropdown show dropup">
                                     <a class="dropdown-toggle p-3" href="#" id="dropdownMenuLink" data-toggle="dropdown"
@@ -113,10 +113,13 @@
                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        @if(adminAccessRoute(config('role.user_management.access.edit')))
                                         <a class="dropdown-item" href="{{ route('admin.user-edit',$user->id) }}">
                                             <i class="fa fa-edit text-warning pr-2"
                                                aria-hidden="true"></i> @lang('Edit')
                                         </a>
+                                        @endif
+                                            @if(adminAccessRoute(config('role.login_user.access.view')))
                                         <a class="dropdown-item loginAccount" href="javascript:void(0)"
                                            data-toggle="modal"
                                            data-target="#signIn"
@@ -124,15 +127,16 @@
                                             <i class="fa fa-sign-in-alt text-primary pr-2"
                                                aria-hidden="true"></i> @lang('Login as User')
                                         </a>
-
+                                            @endif
+                                            @if(adminAccessRoute(config('role.send_email.access.view')))
                                         <a class="dropdown-item" href="{{ route('admin.send-email',$user->id) }}">
                                             <i class="fa fa-envelope text-success pr-2"
                                                aria-hidden="true"></i> @lang('Send Email')
                                         </a>
+                                            @endif
                                     </div>
                                 </div>
                             </td>
-                            @endif
                         </tr>
                     @empty
                         <tr>

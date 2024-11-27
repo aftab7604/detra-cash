@@ -144,7 +144,7 @@
     "Message": "Message",
     "Send Message": "Send Message",
     "Forbidden": "Forbidden",
-    "You don't have permission to access ‘/’ on this server": "You don't have permission to access ‘/’ on this server",
+    "You don't have permission to access ‘\/’ on this server": "You don't have permission to access ‘\/’ on this server",
     "Back To Home": "Back To Home",
     "Opps!": "Opps!",
     "The page you are looking for was not found.": "The page you are looking for was not found.",
@@ -263,7 +263,7 @@
     "Expiration": "Expiration",
     "Description": "Description",
     "Cookie usage": "Cookie usage",
-    "I use cookies to ensure the basic functionalities of the website and to enhance your online experience. You can choose for each category to opt-in/out whenever you want. For more details relative to cookies and other sensitive data, please read the full": "I use cookies to ensure the basic functionalities of the website and to enhance your online experience. You can choose for each category to opt-in/out whenever you want. For more details relative to cookies and other sensitive data, please read the full",
+    "I use cookies to ensure the basic functionalities of the website and to enhance your online experience. You can choose for each category to opt-in\/out whenever you want. For more details relative to cookies and other sensitive data, please read the full": "I use cookies to ensure the basic functionalities of the website and to enhance your online experience. You can choose for each category to opt-in\/out whenever you want. For more details relative to cookies and other sensitive data, please read the full",
     "privacy policy": "privacy policy",
     "Strictly necessary cookies": "Strictly necessary cookies",
     "These cookies are essential for the proper functioning of my website. Without these cookies, the website would not work properly": "These cookies are essential for the proper functioning of my website. Without these cookies, the website would not work properly",
@@ -277,7 +277,7 @@
     "Amount will convert": "Amount will convert",
     "Great exchange rates": "Great exchange rates",
     "No hidden fees": "No hidden fees",
-    "24/7 Transfers": "24/7 Transfers",
+    "24\/7 Transfers": "24\/7 Transfers",
     "5-star customer rating": "5-star customer rating",
     "Award-winning service": "Award-winning service",
     "Monitoring Real-time": "We Provide Real-time Exchange (FX) Rates for Remittance",
@@ -287,5 +287,5 @@
     "Enter Promo Code": "Enter Promo Code",
     "Total Payable Amount": "Total Payable Amount",
     "Select Bank Currency": "Select Bank Currency",
-    "Have a coupon code?": "Have a coupon code?"
+    "Have a coupon code?": "Have a coupon co"
 }

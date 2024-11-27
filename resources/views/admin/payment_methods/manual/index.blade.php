@@ -11,7 +11,7 @@
             <div class="col-12">
                 <div class="card card-primary shadow">
                     <div class="card-body">
-                        @if(adminAccessRoute(config('role.payment_gateway.access.view')))
+                        @if(adminAccessRoute(config('role.payment_gateway.access.add')))
                         <a href="{{route('admin.deposit.manual.create')}}" class="btn btn-success btn-sm float-right mb-3"><i class="fa fa-plus-circle"></i> {{trans('Add New')}}</a>
                         @endif
 

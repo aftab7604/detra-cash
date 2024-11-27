@@ -133,7 +133,7 @@
                 @endif
 
 
-               
+
                 @if(adminAccessRoute(config('role.remittance_history.access.view')))
                     <li class="list-divider"></li>
                     <li class="nav-small-cap"><span class="hide-menu">@lang('REMITTANCE HISTORY')</span></li>
@@ -180,7 +180,7 @@
                     </li>
                 @endif
 
-                
+
                     <li class="list-divider"></li>
                     <li class="nav-small-cap"><span class="hide-menu">@lang('Withdraw History')</span></li>
                     @if(!adminAccessRoute(config('role.withdraw_history.access.view')))
@@ -200,7 +200,7 @@
                     </li>
                     @endif
 
-                @if(adminAccessRoute(array_merge(config('role.payment_method.access.view'), config('role.payment_gateway.access.view'), config('role.payment_log_pending.access.view'), config('role.payment_log.access.view'), config('role.payment_log_report.access.view'))))
+                @if(adminAccessRoute(array_merge(config('role.payment_method.access.view'), config('role.payment_gateway.access.view'), config('role.payment_log_pending.access.view'), config('role.payment_log1.access.view'), config('role.payment_log_report.access.view'))))
                     <li class="list-divider"></li>
                     <li class="nav-small-cap"><span class="hide-menu">@lang('Payment Settings')</span></li>
 
@@ -235,7 +235,7 @@
                             </a>
                         </li>
                     @endif
-                    @if(adminAccessRoute(config('role.payment_log.access.view')))
+                    @if(adminAccessRoute(config('role.payment_log1.access.view')))
                         <li class="sidebar-item {{menuActive(['admin.payment.log','admin.payment.search'],3)}}">
                             <a class="sidebar-link" href="{{route('admin.payment.log')}}" aria-expanded="false">
                                 <i class="fas fa-history"></i>
@@ -294,7 +294,7 @@
                     @endif
                     @if(adminAccessRoute(config('role.kyc_log.access.view')))
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{ route('admin.users.kyc') }}"
+                        <a class="sidebar-link" href="{{ route('admin.users.kyclogs') }}"
                            aria-expanded="false">
                             <i class="fas fa-file-invoice"></i>
                             <span class="hide-menu">@lang('KYC Log')</span>
@@ -342,7 +342,7 @@
                 @endif
 
 
-                
+
                     <li class="nav-small-cap"><span class="hide-menu">@lang('Support Tickets')</span></li>
                     @if(adminAccessRoute(config('role.support_ticket.access.view')))
                     <li class="sidebar-item">
@@ -390,7 +390,7 @@
                     </li>
                 @endif
 
-                
+
                     <li class="nav-small-cap"><span class="hide-menu">@lang('Controls')</span></li>
                     @if(adminAccessRoute(config('role.our_futures.access.view')))
                     <li class="sidebar-item">
@@ -416,7 +416,7 @@
                             </a>
                         </li>
                     @endif
-                    
+
                         <li class="sidebar-item">
                             <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
                                 <i class="fas fa-envelope"></i>

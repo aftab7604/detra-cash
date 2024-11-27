@@ -237,7 +237,7 @@ $arr = [
             'view' => [
                 'admin.money-transfer',
                 'admin.money-transfer.search',
-                'admin.money-transfer.details',
+//                'admin.money-transfer.details',
 //                'admin.money-transfer.flutterAction',
 //                'admin.money-transfer.flutterVerifyAcc',
 //                'admin.money-transfer.flutterVerifyTrx',
@@ -340,7 +340,10 @@ $arr = [
                 'admin.update.payment.methods',
                 'admin.payment.methods.deactivate'
             ],
-            'delete' => [],
+            'delete' => [
+                'admin.payment.methods.withdrawinfodestroy',
+                'admin.payment.methods.currencydestroy'
+            ],
         ],
     ],
     'payment_gateway' => [
@@ -348,10 +351,11 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.deposit.manual.index',
-				'admin.deposit.manual.create',
+            ],
+            'add' => [
+                'admin.deposit.manual.create',
                 'admin.deposit.manual.store'
             ],
-            'add' => [],
             'edit' => [
                 'admin.deposit.manual.edit',
                 'admin.deposit.manual.update',
@@ -359,19 +363,19 @@ $arr = [
             'delete' => [],
         ],
     ],
-//    'payment_log' => [
-//        'label' => "Payment Log",
-//        'access' => [
-//            'view' => [
-//                'admin.payment.log',
-//            ],
-//            'add' => [],
-//            'edit' => [
-//                'admin.payment.action'
-//            ],
-//            'delete' => [],
-//        ],
-//    ],
+    'payment_log1' => [
+        'label' => "Payment Log",
+        'access' => [
+            'view' => [
+                'admin.payment.log',
+            ],
+            'add' => [],
+            'edit' => [
+                'admin.payment.action'
+            ],
+            'delete' => [],
+        ],
+    ],
     'payment_log_pending' => [
         'label' => "Payment Request",
         'access' => [
@@ -511,7 +515,8 @@ $arr = [
         'access' => [
             'view' => [],
             'add' => [
-                'admin.merchants.create'
+                'admin.merchants.create',
+                'admin.merchants.store'
             ],
             'edit' => [],
             'delete' => []
@@ -559,7 +564,7 @@ $arr = [
         'label' => "KYC Log",
         'access' => [
             'view' => [
-                'admin.users.kyc',
+                'admin.users.kyclogs',
             ],
             'add' => [],
             'edit' => [],
@@ -741,11 +746,11 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.email-template.show',
-                'admin.email-template.update',
             ],
             'add' => [],
             'edit' => [
                 'admin.email-template.edit',
+                'admin.email-template.update',
             ],
             'delete' => [],
         ],
@@ -759,7 +764,7 @@ $arr = [
             ],
             'add' => [],
             'edit' => [
-//                'admin.sms.config',
+                'admin.sms_config.access.edit',
             ],
             'delete' => [],
         ],
@@ -770,11 +775,11 @@ $arr = [
         'access' => [
             'view' => [
                 'admin.sms-template',
-                'admin.sms-template.update',
             ],
             'add' => [],
             'edit' => [
                 'admin.sms-template.edit',
+                'admin.sms-template.update',
             ],
             'delete' => [],
         ],
@@ -823,6 +828,10 @@ $arr = [
                 'admin.language.edit',
                 'admin.language.update',
                 'admin.language.keywordEdit',
+                'admin.language.storeKey',
+                'admin.language.updateKey',
+                'admin.language.deleteKey',
+                'admin.language.importJson'
             ],
             'delete' => [
                 'admin.language.delete'
